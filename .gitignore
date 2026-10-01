@@ -1,0 +1,42 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# next
+.next
+out
+dist
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# logs / debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# ide / os
+.DS_Store
+.idea
+.vscode
+Thumbs.db
+
+# agent runtime
+*.keypair.json
+id.json
+
+# vercel
+.vercel
+
+# local scratch
+New Text Document.txt

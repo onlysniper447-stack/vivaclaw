@@ -1,0 +1,1 @@
+export { executeIntent } from "./router";

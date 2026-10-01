@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #ffb81c;
+  --secondary: #f5f5f5;
+  --neutral: #0a0a0a;
+  --surface: #141414;
+  --raised: #1a1a1a;
+  --on-surface: #f5f5f5;
+  --border: #2b313b;
+  --muted: #9ca3af;
+  --disabled: #6b7280;
+  --ok: #34d399;
+  --error: #ef4444;
+  --focus: #7fb2ff;
+  --space-xs: 10px;
+  --space-sm: 20px;
+  --space-md: 28px;
+  --space-lg: 72px;
+  --space-xl: 140px;
+  --radius-control: 2px;
+  --radius-card: 8px;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: var(--font-sora), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --color-primary: #ffb81c;
+  --color-ink: #f5f5f5;
+  --color-canvas: #0a0a0a;
+  --color-surface: #141414;
+  --color-raised: #1a1a1a;
+  --color-line: #2b313b;
+  --color-muted: #9ca3af;
+  --color-ok: #34d399;
+  --color-danger: #ef4444;
+  --color-focus: #7fb2ff;
+}
+
+html,
+body {
+  background: var(--neutral);
+  color: var(--on-surface);
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sora), system-ui, sans-serif;
+  font-weight: 300;
+  text-rendering: optimizeLegibility;
+}
+
+.num,
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+[id] {
+  scroll-margin-top: 80px;
+}
+
+::selection {
+  background: rgb(255 184 28 / 35%);
+  color: var(--neutral);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
