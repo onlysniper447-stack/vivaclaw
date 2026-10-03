@@ -41,6 +41,12 @@ async function main() {
         errors: discovered.errors,
         byVenue: Object.fromEntries(byVenue),
         verified: discovered.opportunities.filter((row) => row.verified).length,
+        indications: {
+          ENTER: discovered.opportunities.filter((row) => row.signal?.indication === "ENTER").length,
+          WATCH: discovered.opportunities.filter((row) => row.signal?.indication === "WATCH").length,
+          AVOID: discovered.opportunities.filter((row) => row.signal?.indication === "AVOID").length,
+        },
+        alerts: discovered.alerts.length,
         sample: discovered.opportunities.slice(0, 8).map((row) => ({
           id: row.id,
           venue: row.venue,
@@ -48,6 +54,7 @@ async function main() {
           apr: row.apr,
           tvl: row.tvl,
           verified: row.verified,
+          indication: row.signal?.indication ?? null,
         })),
       },
       null,

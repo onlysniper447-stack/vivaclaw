@@ -4,10 +4,13 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { usePoolAction } from "@/components/console/usePoolAction";
 import { Drawer, EmptyState, Field, Segmented, Sparkline, Stat, StatusDot } from "@/components/ui/kit";
-import { cleanText, downloadCsv, formatPercentBps, formatSignedBps, freshnessLabel, statusText, utcStamp } from "@/lib/present";
+import { cleanText, downloadCsv, formatPercentBps, formatSignedBps, freshnessLabel, indicationTone, statusText, utcStamp } from "@/lib/present";
 import { venueLabel } from "@/lib/venues";
 import type { DashboardPayload, VenueYieldRow, YieldMonitorRow } from "@/types/dashboard";
 import type { VenueFamily } from "@/types/vivaclaw";
+import type { Indication } from "vivaclaw-core";
+
+const INDICATION_ORDER: Record<Indication, number> = { ENTER: 0, WATCH: 1, AVOID: 2 };
 
 const PAGE = 25;
 
@@ -44,9 +47,10 @@ function RateCell({ bps, quality }: { bps: number | null; quality: VenueYieldRow
 
 export function YieldBoard({ data }: { data: DashboardPayload }) {
   const [venue, setVenue] = useState<"all" | VenueFamily>("all");
+  const [indication, setIndication] = useState<"all" | Indication>("all");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState<"apy" | "asset">("apy");
+  const [sort, setSort] = useState<"signal" | "apy" | "asset">("signal");
   const [open, setOpen] = useState<VenueYieldRow | null>(null);
   const [gapPage, setGapPage] = useState(1);
   const trigger = (data.yields.triggerBps / 100).toFixed(1);
@@ -54,14 +58,22 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
   const openPools = new Set(
     (data.execution.positions ?? []).filter((row) => row.status === "open").map((row) => row.poolId),
   );
+  const kinkAlerts = data.alerts.filter((row) => row.kind === "kink-proximity");
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return data.yields.venues
       .filter((row) => (venue === "all" ? true : row.family === venue))
+      .filter((row) => (indication === "all" ? true : row.indication === indication))
       .filter((row) => (q ? `${row.symbol} ${row.mint}`.toLowerCase().includes(q) : true))
-      .sort((a, b) => (sort === "asset" ? a.symbol.localeCompare(b.symbol) : (b.apyBps ?? -1) - (a.apyBps ?? -1)));
-  }, [data.yields.venues, query, sort, venue]);
+      .sort((a, b) => {
+        if (sort === "asset") return a.symbol.localeCompare(b.symbol);
+        if (sort === "apy") return (b.apyBps ?? -1) - (a.apyBps ?? -1);
+        const d = INDICATION_ORDER[a.indication] - INDICATION_ORDER[b.indication];
+        if (d !== 0) return d;
+        return (b.apyBps ?? -1) - (a.apyBps ?? -1);
+      });
+  }, [data.yields.venues, indication, query, sort, venue]);
 
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE));
   const safePage = Math.min(page, pages);
@@ -70,18 +82,19 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
   const gapPages = Math.max(1, Math.ceil(gaps.length / PAGE));
   const safeGap = Math.min(gapPage, gapPages);
   const gapSlice = gaps.slice((safeGap - 1) * PAGE, safeGap * PAGE);
-  const bestApr = bestBy(filtered, "aprBps");
   const bestApy = bestBy(filtered, "apyBps");
 
   function exportVenues() {
     downloadCsv("vivaclaw-venue-yields.csv", [
-      ["asset", "mint", "venue", "apr", "apy", "quality", "source", "updated"],
+      ["asset", "mint", "venue", "apr", "apy", "indication", "reasons", "quality", "source", "updated"],
       ...slice.map((row) => [
         cleanText(row.symbol),
         row.mint,
         venueLabel(row.venue),
         row.aprBps === null ? "" : (row.aprBps / 100).toFixed(2),
         row.apyBps === null ? "" : (row.apyBps / 100).toFixed(2),
+        row.indication,
+        row.reasons.join(" | "),
         row.quality,
         row.source,
         row.updatedAt ? new Date(row.updatedAt).toISOString() : "",
@@ -94,7 +107,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
       <div>
         <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Venue yields</h1>
         <p className="mt-2 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-          One row is one venue. Click ENTER to simulate a deposit at that APR/APY. Claim or withdraw on Execution.
+          One row is one venue with an ENTER, WATCH, or AVOID indication. {data.disclaimer}
         </p>
         <p className="mt-2 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
           {RATE_COPY} {COVERAGE}
@@ -121,17 +134,29 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
           <div>
             <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Venue yields</h1>
             <p className="mt-2 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-              One row is one venue. Click ENTER to simulate a deposit at that APR/APY. Claim or withdraw on Execution.
+              One row is one venue with an ENTER, WATCH, or AVOID indication and reasons. Simulate a deposit from an ENTER or WATCH row. Claim or withdraw on Execution.
             </p>
           </div>
           <p className="num font-mono text-[12px] text-[#9CA3AF]">{filtered.length} rates</p>
         </div>
-        <div className="mt-8 grid border border-[#2B313B] sm:grid-cols-2">
+        <div className="mt-8 grid border border-[#2B313B] sm:grid-cols-2 xl:grid-cols-4">
           <Stat
-            label="Best APR"
-            value={bestApr ? formatPercentBps(bestApr.aprBps) : "—"}
-            source={bestApr ? `${venueLabel(bestApr.venue)} ${cleanText(bestApr.symbol)}` : "Simple annualized"}
-            time={freshnessLabel(bestApr?.updatedAt ?? data.lastScanAt)}
+            label="ENTER"
+            value={String(data.yields.enterCount)}
+            source="Indication"
+            time={freshnessLabel(data.lastScanAt)}
+          />
+          <Stat
+            label="WATCH"
+            value={String(data.yields.watchCount)}
+            source="Indication"
+            time={freshnessLabel(data.lastScanAt)}
+          />
+          <Stat
+            label="AVOID"
+            value={String(data.yields.avoidCount)}
+            source="Indication"
+            time={freshnessLabel(data.lastScanAt)}
           />
           <Stat
             label="Best APY"
@@ -141,8 +166,13 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
           />
         </div>
         <p className="mt-4 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-          {RATE_COPY} {COVERAGE}
+          {data.disclaimer} {RATE_COPY} {COVERAGE}
         </p>
+        {kinkAlerts.length > 0 ? (
+          <p className="mt-4 border-l-2 border-[#FFB81C] pl-4 font-sans text-[16px] font-light text-[#F5F5F5]">
+            Kink-proximity: {kinkAlerts.map((row) => cleanText(row.symbol)).join(", ")}. Borrow APY steps up above 80% utilization.
+          </p>
+        ) : null}
         {enter.isError ? (
           <p className="mt-4 font-sans text-[16px] font-light text-[#EF4444]">
             {enter.error instanceof Error ? enter.error.message : "ENTER did not finish."}
@@ -172,8 +202,26 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
             }}
             className="max-w-xs"
           />
-          <button type="button" className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase" onClick={() => setSort(sort === "apy" ? "asset" : "apy")}>
-            Sort {sort === "apy" ? "by APY" : "by asset"}
+          <Segmented
+            label="Indication"
+            value={indication}
+            onChange={(next) => {
+              setIndication(next);
+              setPage(1);
+            }}
+            options={[
+              { value: "all", label: "All" },
+              { value: "ENTER", label: "ENTER" },
+              { value: "WATCH", label: "WATCH" },
+              { value: "AVOID", label: "AVOID" },
+            ]}
+          />
+          <button
+            type="button"
+            className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase"
+            onClick={() => setSort(sort === "signal" ? "apy" : sort === "apy" ? "asset" : "signal")}
+          >
+            Sort {sort === "signal" ? "by indication" : sort === "apy" ? "by APY" : "by asset"}
           </button>
           <Button variant="link" onClick={exportVenues}>Export visible rows</Button>
         </div>
@@ -185,13 +233,14 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
                 <th className="py-3 pr-4 font-medium">Venue</th>
                 <th className="py-3 pr-4 font-medium">APR</th>
                 <th className="py-3 pr-4 font-medium">APY</th>
-                <th className="py-3 font-medium">ENTER</th>
+                <th className="py-3 pr-4 font-medium">Indication</th>
+                <th className="py-3 font-medium">Simulate</th>
               </tr>
             </thead>
             <tbody>
               {slice.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-8 font-sans text-[16px] font-light text-[#9CA3AF]">
+                  <td colSpan={6} className="py-8 font-sans text-[16px] font-light text-[#9CA3AF]">
                     Nothing matches that search.
                   </td>
                 </tr>
@@ -210,6 +259,9 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
                     </td>
                     <td className="num py-4 pr-4 font-mono text-[14px]" title={utcStamp(row.updatedAt)}>
                       <RateCell bps={row.apyBps} quality={row.quality} />
+                    </td>
+                    <td className="py-4 pr-4">
+                      <StatusDot tone={indicationTone(row.indication)} label={row.indication} />
                     </td>
                     <td className="py-4">
                       <EnterButton
@@ -302,7 +354,7 @@ function GapLine({ row }: { row: YieldMonitorRow }) {
 }
 
 function canEnter(row: VenueYieldRow): boolean {
-  return row.quality === "ok" && row.apyBps !== null && row.apyBps > 0;
+  return row.indication !== "AVOID" && row.quality === "ok" && row.apyBps !== null && row.apyBps > 0;
 }
 
 function EnterButton({
@@ -360,7 +412,16 @@ function VenueDetail({
       <p>Impact: {row.quoted && row.priceImpactBps !== null ? formatPercentBps(row.priceImpactBps) : "Not quoted"}</p>
       <p>Source: {cleanText(row.source)}</p>
       <p title={utcStamp(row.updatedAt)}>{freshnessLabel(row.updatedAt)} · {utcStamp(row.updatedAt)}</p>
+      <p>
+        <StatusDot tone={indicationTone(row.indication)} label={row.indication} />
+      </p>
+      <ul className="space-y-2">
+        {row.reasons.map((reason) => (
+          <li key={reason}>{reason}</li>
+        ))}
+      </ul>
       {row.unusualReason ? <p className="text-[#FFB81C]">{row.unusualReason}</p> : null}
+      <p className="text-[#9CA3AF]">Indications are informational, not financial advice.</p>
       <EnterButton row={row} open={open} pending={pending} onEnter={onEnter} />
     </div>
   );

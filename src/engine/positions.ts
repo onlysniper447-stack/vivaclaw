@@ -117,6 +117,9 @@ export function enterPool(poolId: string): PositionActionResult {
     : pool && pool.rateQuality === "ok"
       ? pool.apy
       : null;
+  if (hl?.signal?.indication === "AVOID") {
+    return fail(hl.signal.reasons[0] ?? "This pool is marked AVOID.");
+  }
   if (apy === null || !(apy > 0)) {
     return fail(pool || hl ? "This pool does not have a usable APY." : "Check yields first, then ENTER a printed pool.");
   }

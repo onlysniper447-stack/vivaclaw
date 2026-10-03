@@ -3,7 +3,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { Bar, EmptyState, SortButton, Stat, StatusDot } from "@/components/ui/kit";
-import { cleanText, formatPercentBps, formatSignedBps, freshnessLabel, oracleAgeSeconds, pegReading, riskVerdict, shortenMint, statusText, utcStamp } from "@/lib/present";
+import { cleanText, formatPercentBps, formatSignedBps, freshnessLabel, indicationTone, riskVerdict, shortenMint, statusText, utcStamp } from "@/lib/present";
 import type { DashboardPayload, YieldMonitorRow } from "@/types/dashboard";
 
 type Key = "asset" | "meteora" | "kamino" | "gap" | "status";
@@ -17,15 +17,21 @@ export function Overview({ data }: { data: DashboardPayload }) {
   const trigger = (data.yields.triggerBps / 100).toFixed(1);
   const observed = data.yields.rows.some((row) => row.observed);
   const above = data.yields.rows.filter((row) => row.observed && row.status === "above");
-  const names = above.map((row) => cleanText(row.symbol));
-  const headline = !observed
-    ? data.lastScanAt
-      ? data.engine.reason ?? "The last check did not return a comparable rate."
-      : "No rates have been checked yet."
-    : above.length === 0
-      ? `No asset is above the ${trigger}% trigger.`
-      : `${above.length} ${above.length === 1 ? "asset is" : "assets are"} above the ${trigger}% trigger: ${names.join(", ").replace(/, ([^,]*)$/, " and $1")}`;
-  const unusual = data.yields.rows.find((row) => row.unusual && row.unusualReason);
+  const kink = data.alerts.filter((row) => row.kind === "kink-proximity");
+  const kinkNames = [...new Set(kink.map((row) => cleanText(row.symbol)))];
+  const enterCount = data.yields.enterCount;
+  const headline =
+    data.yields.venues.length === 0
+      ? data.lastScanAt
+        ? data.engine.reason ?? "The last check did not return a lend or LP print."
+        : "No rates have been checked yet."
+      : kinkNames.length > 0
+        ? `Kink-proximity on ${kinkNames.join(", ").replace(/, ([^,]*)$/, " and $1")}. ${enterCount} ENTER ${enterCount === 1 ? "indication" : "indications"}.`
+        : `${enterCount} ENTER ${enterCount === 1 ? "indication" : "indications"} across HyperCore and HyperEVM.`;
+  const unusual =
+    kink[0] ??
+    data.alerts[0] ??
+    data.yields.venues.find((row) => row.unusual && row.unusualReason);
 
   const rows = useMemo(() => {
     const copy = [...data.yields.rows];
@@ -46,11 +52,6 @@ export function Overview({ data }: { data: DashboardPayload }) {
   const safePage = Math.min(page, pages);
   const slice = rows.slice((safePage - 1) * PAGE, safePage * PAGE);
   const maxGap = Math.max(...above.map((row) => Math.abs(row.deltaApyBps ?? 0)), 1);
-  const largest = data.yields.rows.reduce<YieldMonitorRow | null>((best, row) => {
-    if (row.deltaApyBps === null) return best;
-    if (!best || Math.abs(row.deltaApyBps) > Math.abs(best.deltaApyBps ?? 0)) return row;
-    return best;
-  }, null);
   const rated = data.yields.venues.filter((row) => row.apyBps !== null).length;
   const risk = riskVerdict(data);
 
@@ -68,32 +69,32 @@ export function Overview({ data }: { data: DashboardPayload }) {
           {headline}
         </h1>
         <p className="mt-4 max-w-xl font-sans text-[16px] leading-relaxed font-light text-[#9CA3AF]">
-          Dry run is on. Nothing on this page is signed or sent.
+          {data.disclaimer} Dry run is on. Nothing on this page is signed or sent.
         </p>
-        {unusual?.unusualReason ? (
+        {unusual ? (
           <p className="mt-4 border-l-2 border-[#FFB81C] pl-4 font-sans text-[16px] font-light text-[#F5F5F5]">
-            {unusual.unusualReason}
+            {"message" in unusual ? unusual.message : unusual.unusualReason}
           </p>
         ) : null}
 
         <div className="mt-8 grid border border-[#2B313B] sm:grid-cols-2 xl:grid-cols-4">
           <Stat
-            label="Above trigger"
-            value={observed ? String(above.length) : "—"}
-            source="Comparable gaps"
+            label="ENTER"
+            value={data.yields.venues.length > 0 ? String(data.yields.enterCount) : "—"}
+            source="Indication"
             time={freshnessLabel(data.lastScanAt)}
           />
           <Stat
-            label="Largest gap"
-            value={largest?.deltaApyBps === null || largest === null ? "—" : formatSignedBps(largest.deltaApyBps)}
-            source={largest ? cleanText(largest.symbol) : "HyperEVM − HyperCore"}
-            time={freshnessLabel(largest?.updatedAt ?? data.lastScanAt)}
+            label="WATCH"
+            value={data.yields.venues.length > 0 ? String(data.yields.watchCount) : "—"}
+            source="Indication"
+            time={freshnessLabel(data.lastScanAt)}
           />
           <Stat
             label="Risk"
             value={risk.word}
-            source="Pyth"
-            time={freshnessLabel(data.risk?.evaluatedAt ?? null)}
+            source="Signals"
+            time={freshnessLabel(data.lastScanAt)}
           />
           <Stat
             label="Rates tracked"
@@ -184,27 +185,35 @@ export function Overview({ data }: { data: DashboardPayload }) {
           <p className="mt-3 font-sans text-[22px] font-semibold tracking-[-0.02em]">{risk.word}</p>
           <p className="mt-2 font-sans text-[16px] font-light text-[#9CA3AF]">{risk.reason}</p>
           <ul className="mt-5 divide-y divide-[#2B313B]">
-            {(data.risk?.peg ?? []).map((peg) => (
-              <li key={peg.symbol} className="flex items-center justify-between gap-3 py-3">
-                <span className="font-sans text-[16px]">{cleanText(peg.symbol.replace("_", "/"))}</span>
-                <StatusDot {...pegReading(peg.healthy, oracleAgeSeconds(data.generatedAt, peg.publishTime), data.risk?.thresholds.oracleMaxAgeSec ?? 15)} />
+            {data.alerts.slice(0, 6).map((alert) => (
+              <li key={`${alert.kind}:${alert.opportunityId}`} className="flex items-center justify-between gap-3 py-3">
+                <span className="font-sans text-[16px]">{cleanText(alert.symbol)}</span>
+                <StatusDot
+                  tone={alert.kind === "kink-proximity" ? "attention" : "bad"}
+                  label={alert.kind.replaceAll("-", " ")}
+                />
               </li>
             ))}
-            {(data.risk?.volatility ?? []).map((vol) => (
-              <li key={vol.symbol} className="flex items-center justify-between gap-3 py-3">
-                <span className="font-sans text-[16px]">{cleanText(vol.symbol)} volatility</span>
-                <StatusDot tone={vol.extreme ? "bad" : "ok"} label={vol.extreme ? "Outside band" : "Inside band"} />
-              </li>
-            ))}
-            {!data.risk ? <li className="py-3 font-sans text-[16px] font-light text-[#9CA3AF]">Waiting for a Pyth print.</li> : null}
+            {data.yields.venues
+              .filter((row) => row.indication === "ENTER")
+              .slice(0, 3)
+              .map((row) => (
+                <li key={row.id} className="flex items-center justify-between gap-3 py-3">
+                  <span className="font-sans text-[16px]">{cleanText(row.symbol)}</span>
+                  <StatusDot tone={indicationTone(row.indication)} label={row.indication} />
+                </li>
+              ))}
+            {data.alerts.length === 0 && data.yields.enterCount === 0 ? (
+              <li className="py-3 font-sans text-[16px] font-light text-[#9CA3AF]">No kink-proximity or pause alerts on this scan.</li>
+            ) : null}
           </ul>
         </Card>
         <Card>
           <h2 className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">Connections</h2>
           <ul className="mt-4 space-y-4">
-            <Connection name="RPC" probe={data.probes.rpc} />
-            <Connection name="Jupiter" probe={data.probes.jupiter} />
-            <Connection name="Engine" probe={data.probes.engine} />
+            <Connection name={data.probes.rpc.name} probe={data.probes.rpc} />
+            <Connection name={data.probes.jupiter.name} probe={data.probes.jupiter} />
+            <Connection name={data.probes.engine.name} probe={data.probes.engine} />
           </ul>
         </Card>
       </aside>

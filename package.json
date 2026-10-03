@@ -15,7 +15,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/engine/classify.test.ts src/engine/retry.test.ts src/engine/apy.test.ts src/engine/rates.test.ts src/engine/lp.test.ts src/engine/positions.test.ts src/lib/present.test.ts src/lib/wallet/address.test.ts src/components/ui/states.test.tsx src/app/routes.smoke.test.ts packages/vivaclaw-core/src/rate-model.test.ts packages/vivaclaw-core/src/il.test.ts packages/vivaclaw-core/src/llama.test.ts",
+    "test": "tsx --test src/engine/classify.test.ts src/engine/retry.test.ts src/engine/apy.test.ts src/engine/rates.test.ts src/engine/lp.test.ts src/engine/positions.test.ts src/lib/present.test.ts src/lib/wallet/address.test.ts src/components/ui/states.test.tsx src/app/routes.smoke.test.ts packages/vivaclaw-core/src/rate-model.test.ts packages/vivaclaw-core/src/il.test.ts packages/vivaclaw-core/src/llama.test.ts packages/vivaclaw-core/src/signal.test.ts",
     "test:core": "tsx --test packages/vivaclaw-core/src/*.test.ts",
     "smoke:hl": "tsx packages/vivaclaw-core/src/smoke.ts",
     "engine:feed": "node --env-file=.env.local --import tsx src/engine/feeds/ws-server.ts"

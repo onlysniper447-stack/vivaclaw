@@ -6,6 +6,7 @@ import { fetchMorphoOpportunities } from "./adapters/morpho";
 import { verifyErc4626Vaults } from "./adapters/verify-vault";
 import { cached } from "./cache";
 import { CACHE_TTL, VERIFY_TOP_N } from "./constants";
+import { collectAlerts, indicationRank, INDICATION_DISCLAIMER, scoreOpportunities } from "./signal";
 import type { DiscoverResult, Opportunity } from "./types";
 
 export async function discoverOpportunities(): Promise<DiscoverResult> {
@@ -29,8 +30,15 @@ async function loadAll(): Promise<DiscoverResult> {
 
   const fetchedAt = Date.now();
   const verified = skipVerify() ? opportunities : await verifyTop(opportunities);
-  verified.sort(rank);
-  return { opportunities: verified, errors, fetchedAt };
+  const scored = scoreOpportunities(verified);
+  scored.sort(rank);
+  return {
+    opportunities: scored,
+    errors,
+    fetchedAt,
+    alerts: collectAlerts(scored),
+    disclaimer: INDICATION_DISCLAIMER,
+  };
 }
 
 function skipVerify(): boolean {
@@ -61,6 +69,9 @@ function pick(opps: Opportunity[], test: (o: Opportunity) => boolean, n: number)
 }
 
 function rank(a: Opportunity, b: Opportunity): number {
+  const orderA = a.signal ? indicationRank(a.signal.indication) : 1;
+  const orderB = b.signal ? indicationRank(b.signal.indication) : 1;
+  if (orderA !== orderB) return orderA - orderB;
   const apyA = a.apyTotal ?? -1;
   const apyB = b.apyTotal ?? -1;
   if (apyA !== apyB) return apyB - apyA;

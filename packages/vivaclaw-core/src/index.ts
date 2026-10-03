@@ -1,10 +1,13 @@
 export type {
   DiscoverResult,
   IlClass,
+  Indication,
   Opportunity,
   OpportunityAsset,
   OpportunityLayer,
   OpportunityType,
+  Signal,
+  SignalAlert,
   SupplySimulation,
   VenueSlug,
 } from "./types";
@@ -35,6 +38,7 @@ export {
   WSTHYPE,
 } from "./constants";
 
+export { collectAlerts, indicationRank, INDICATION_DISCLAIMER, scoreOpportunities, scoreOpportunity } from "./signal";
 export { discoverOpportunities } from "./aggregator";
 export { fetchHyperCoreOpportunities } from "./adapters/hypercore";
 export { fetchLlamaOpportunities } from "./adapters/llama";

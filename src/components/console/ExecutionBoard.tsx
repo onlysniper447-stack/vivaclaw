@@ -33,7 +33,7 @@ export function ExecutionBoard({ data }: { data: DashboardPayload }) {
       <section>
         <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Execution</h1>
         <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-          ENTER on Venue yields simulates a deposit. Earned yield accrues from that pool&apos;s APR. CLAIM harvests it. WITHDRAW exits. Nothing is signed or sent.
+          Simulate a deposit from an ENTER or WATCH row on Venue yields. AVOID rows stay off this path. Earned yield accrues from that pool&apos;s APR. CLAIM harvests it. WITHDRAW exits. Indications are informational, not financial advice. Nothing is signed or sent.
         </p>
         {act.isError ? (
           <p className="mt-4 font-sans text-[16px] font-light text-[#EF4444]">

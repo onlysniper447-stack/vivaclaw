@@ -1,6 +1,7 @@
 import type { Classification } from "@/engine/classify";
 import type { AgentLog, AgentStatus, EngineView, RiskReport, VenueFamily, VenueId } from "@/types/vivaclaw";
 import type { AgentMode, Cluster } from "@/types";
+import type { Indication, SignalAlert } from "vivaclaw-core";
 
 export type BannerKind = "safe" | "dry-run" | "circuit-hold" | "error";
 
@@ -47,6 +48,9 @@ export interface VenueYieldRow {
   /** Daily compound of the same rate. */
   apyBps: number | null;
   quality: "ok" | "suspect" | "missing";
+  indication: Indication;
+  reasons: string[];
+  alerts: string[];
   unusual: boolean;
   unusualReason: string | null;
   /** Venue print. Not a quoted route. */
@@ -149,7 +153,12 @@ export interface DashboardPayload {
     ceilingBps: number;
     rows: YieldMonitorRow[];
     venues: VenueYieldRow[];
+    enterCount: number;
+    watchCount: number;
+    avoidCount: number;
   };
+  alerts: SignalAlert[];
+  disclaimer: string;
   engine: EngineView;
   stale: boolean;
   scanIntervalMs: number;

@@ -101,14 +101,46 @@ export function pegReading(
 
 /**
  * One risk word for Overview and the Risk tab.
- * A yield that failed to read is not a risk verdict. A Pyth print that has
- * aged past its threshold since the check is Caution, even if it was fresh then.
+ * Hyperliquid alerts (kink, pause, outlier) take priority when present.
+ * A Pyth print that has aged past its threshold since the check is Caution.
  */
-export function riskVerdict(data: Pick<DashboardPayload, "generatedAt" | "risk">): { word: string; reason: string } {
+export function riskVerdict(
+  data: Pick<DashboardPayload, "generatedAt" | "risk"> & Partial<Pick<DashboardPayload, "alerts">>,
+): { word: string; reason: string } {
   const risk = data.risk;
-  if (!risk) return { word: "—", reason: "No Pyth print in this process yet." };
-  if (risk.circuitHold) {
+  if (risk?.circuitHold) {
     return { word: "Hold", reason: risk.reasons[0] ?? "A guardrail is holding execution." };
+  }
+
+  const alerts = data.alerts ?? [];
+  const paused = alerts.filter((row) => row.kind === "paused");
+  const kink = alerts.filter((row) => row.kind === "kink-proximity");
+  const outliers = alerts.filter((row) => row.kind === "apy-outlier");
+  if (paused.length > 0) {
+    return {
+      word: "Caution",
+      reason: `${paused[0]?.symbol ?? "A reserve"} is paused or frozen.`,
+    };
+  }
+  if (kink.length > 0) {
+    const names = [...new Set(kink.map((row) => row.symbol))].slice(0, 3).join(", ");
+    return {
+      word: "Caution",
+      reason: `Utilization is near the 80% kink on ${names}.`,
+    };
+  }
+  if (outliers.length > 0) {
+    return {
+      word: "Caution",
+      reason: `${outliers.length} outlier APY ${outliers.length === 1 ? "print" : "prints"} on this scan.`,
+    };
+  }
+
+  if (!risk) {
+    return {
+      word: "Clear",
+      reason: "No kink-proximity, pause, or outlier alerts on this scan.",
+    };
   }
   const aged = risk.peg.some(
     (peg) => oracleAgeSeconds(data.generatedAt, peg.publishTime) > risk.thresholds.oracleMaxAgeSec,
@@ -124,4 +156,10 @@ export function riskVerdict(data: Pick<DashboardPayload, "generatedAt" | "risk">
     };
   }
   return { word: "Clear", reason: "Peg, confidence, and volatility are inside the configured bands." };
+}
+
+export function indicationTone(indication: "ENTER" | "WATCH" | "AVOID"): "ok" | "attention" | "bad" {
+  if (indication === "ENTER") return "ok";
+  if (indication === "WATCH") return "attention";
+  return "bad";
 }

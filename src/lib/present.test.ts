@@ -66,4 +66,28 @@ describe("present", () => {
     assert.equal(riskVerdict(aged).word, "Caution");
     assert.match(riskVerdict(aged).reason, /older than 15s/);
   });
+
+  it("uses kink-proximity alerts when Hyperliquid signals are present", () => {
+    const verdict = riskVerdict({
+      generatedAt: 1_700_000_000_000,
+      risk: null,
+      alerts: [
+        {
+          kind: "kink-proximity",
+          opportunityId: "hypercore:lend:0",
+          symbol: "USDC (HyperCore)",
+          venue: "hypercore",
+          message: "Utilization is within 5pp of the 80% kink.",
+        },
+      ],
+    });
+    assert.equal(verdict.word, "Caution");
+    assert.match(verdict.reason, /kink/);
+  });
+
+  it("calls a scan with no alerts Clear", () => {
+    const verdict = riskVerdict({ generatedAt: 1, risk: null, alerts: [] });
+    assert.equal(verdict.word, "Clear");
+    assert.match(verdict.reason, /No kink-proximity/);
+  });
 });

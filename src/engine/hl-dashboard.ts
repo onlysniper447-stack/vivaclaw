@@ -1,4 +1,11 @@
-import { discoverOpportunities, type Opportunity, type VenueSlug } from "vivaclaw-core";
+import {
+  discoverOpportunities,
+  INDICATION_DISCLAIMER,
+  scoreOpportunity,
+  type Indication,
+  type Opportunity,
+  type VenueSlug,
+} from "vivaclaw-core";
 import { classifyAsset } from "@/engine/classify";
 import { earnedAmount, listActions, listPositions } from "@/engine/positions";
 import { dailyEarn } from "@/lib/accrual";
@@ -55,6 +62,7 @@ function mapVenueRow(opp: Opportunity, ceilingBps: number): VenueYieldRow {
   const apyBps = toBps(opp.apyTotal ?? opp.apyBase);
   const aprBps = toBps(opp.apr);
   const overCeiling = apyBps !== null && apyBps > ceilingBps;
+  const signal = opp.signal ?? scoreOpportunity(opp, { ceilingApy: ceilingBps / 10_000 });
   return {
     id: opp.id,
     venue: asVenue(opp.venue),
@@ -64,12 +72,15 @@ function mapVenueRow(opp: Opportunity, ceilingBps: number): VenueYieldRow {
     aprBps,
     apyBps,
     quality: qualityOf(opp),
-    unusual: overCeiling,
+    indication: signal.indication,
+    reasons: signal.reasons,
+    alerts: signal.alerts,
+    unusual: overCeiling || signal.alerts.includes("kink-proximity"),
     unusualReason: overCeiling
       ? "Unusually high. Check whether this is a temporary incentive or a stale read."
-      : opp.risks.includes("kink-proximity")
+      : signal.alerts.includes("kink-proximity")
         ? "Utilization is near the 80% kink. Borrow APY steps up above that level."
-        : null,
+        : signal.reasons[0] ?? null,
     grossApyBps: apyBps,
     netApyBps: null,
     feeBps: 0,
@@ -243,7 +254,12 @@ export async function getHyperliquidDashboard(): Promise<DashboardPayload> {
       ceilingBps: env.APY_SANITY_CEILING_BPS,
       rows,
       venues,
+      enterCount: countIndication(venues, "ENTER"),
+      watchCount: countIndication(venues, "WATCH"),
+      avoidCount: countIndication(venues, "AVOID"),
     },
+    alerts: result.alerts,
+    disclaimer: result.disclaimer || INDICATION_DISCLAIMER,
     engine,
     stale: false,
     scanIntervalMs: env.SCAN_INTERVAL_MS,
@@ -291,6 +307,10 @@ export async function getHyperliquidDashboard(): Promise<DashboardPayload> {
   };
 }
 
+function countIndication(venues: VenueYieldRow[], indication: Indication): number {
+  return venues.filter((row) => row.indication === indication).length;
+}
+
 function emptyPayload(triggerBps: number, ceilingBps: number, scanIntervalMs: number): DashboardPayload {
   return {
     dryRun: true,
@@ -307,7 +327,9 @@ function emptyPayload(triggerBps: number, ceilingBps: number, scanIntervalMs: nu
       jupiter: { name: "HyperEVM", ok: true, configured: true, latencyMs: null, detail: "probe skipped during build" },
       engine: { name: "Engine", ok: true, configured: true, latencyMs: null, detail: "idle" },
     },
-    yields: { triggerBps, ceilingBps, rows: [], venues: [] },
+    yields: { triggerBps, ceilingBps, rows: [], venues: [], enterCount: 0, watchCount: 0, avoidCount: 0 },
+    alerts: [],
+    disclaimer: INDICATION_DISCLAIMER,
     engine: {
       phase: "idle",
       reason: null,

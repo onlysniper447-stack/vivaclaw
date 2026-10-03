@@ -17,6 +17,22 @@ export interface OpportunityAsset {
   id: string;
 }
 
+export type Indication = "ENTER" | "WATCH" | "AVOID";
+
+export interface Signal {
+  indication: Indication;
+  reasons: string[];
+  alerts: string[];
+}
+
+export interface SignalAlert {
+  kind: "kink-proximity" | "paused" | "apy-outlier" | "stale" | "cap-exhausted";
+  opportunityId: string;
+  symbol: string;
+  venue: VenueSlug;
+  message: string;
+}
+
 export interface Opportunity {
   id: string;
   type: OpportunityType;
@@ -47,12 +63,16 @@ export interface Opportunity {
   verified: boolean;
   fetchedAt: number;
   stale: boolean;
+  /** Filled by the aggregator after discovery. */
+  signal?: Signal;
 }
 
 export interface DiscoverResult {
   opportunities: Opportunity[];
   errors: { source: string; message: string }[];
   fetchedAt: number;
+  alerts: SignalAlert[];
+  disclaimer: string;
 }
 
 export interface SupplySimulation {

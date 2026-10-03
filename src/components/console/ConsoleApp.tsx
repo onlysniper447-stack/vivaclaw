@@ -75,7 +75,7 @@ export function ConsoleApp() {
               {freshnessLabel(desk.data?.lastScanAt ?? null)}
             </p>
             <ConnectWallet compact />
-            <Tooltip label="Read-only console. It never signs, sends or broadcasts transactions.">
+            <Tooltip label="Indications are informational, not financial advice. The console never signs, sends, or broadcasts.">
               <Chip>Dry run</Chip>
             </Tooltip>
           </div>
@@ -124,6 +124,11 @@ export function ConsoleApp() {
           </>
         ) : null}
       </main>
+      <footer className="border-t border-[#2B313B]">
+        <p className="mx-auto max-w-[1240px] px-5 py-4 font-sans text-[14px] font-light text-[#9CA3AF]">
+          {desk.data?.disclaimer ?? "Indications are informational, not financial advice."} Non-custodial: the app never holds funds or keys.
+        </p>
+      </footer>
     </div>
   );
 }
