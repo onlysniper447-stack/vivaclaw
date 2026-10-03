@@ -16,7 +16,9 @@ export {
   BEHYPE,
   CACHE_TTL,
   CIRCLE_USDC,
+  CORE_WRITER_ADDRESS,
   FELIX_VAULTS,
+  HYPERCORE_INFO_URL,
   HYPERCORE_TOKENS,
   HYPERCORE_USDC_EVM,
   HYPEREVM_CHAIN_ID,
@@ -24,6 +26,9 @@ export {
   HYPEREVM_TESTNET_CHAIN_ID,
   HYPEREVM_TESTNET_RPC_URL,
   HYPERLEND,
+  HYPERLEND_APP_URL,
+  HYPERLIQUID_APP_URL,
+  HYPERSWAP_APP_URL,
   HYPERSWAP,
   HYPE_SYSTEM_ADDRESS,
   KHYPE,
@@ -39,6 +44,19 @@ export {
 } from "./constants";
 
 export { collectAlerts, indicationRank, INDICATION_DISCLAIMER, scoreOpportunities, scoreOpportunity } from "./signal";
+export {
+  buildEntryPlan,
+  defaultPlanAmountWei,
+  encodeBorrowLendAction,
+  encodeCoreWriterSupply,
+  encodeErc4626Deposit,
+  encodeHyperlendSupply,
+  tokenDecimals,
+  type EntryPlan,
+  type PlannedTx,
+  type PlanStep,
+} from "./entry";
+export { hyperEvm, hyperEvmTestnet, evmClient } from "./chain";
 export { discoverOpportunities } from "./aggregator";
 export { fetchHyperCoreOpportunities } from "./adapters/hypercore";
 export { fetchLlamaOpportunities } from "./adapters/llama";

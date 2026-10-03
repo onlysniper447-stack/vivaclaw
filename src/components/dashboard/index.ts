@@ -10,7 +10,6 @@ export { ExecutionPanel } from "./ExecutionPanel";
 export { ProtocolCards } from "./ProtocolCards";
 export { ScanDialog } from "./ScanDialog";
 export { SystemStatus } from "./SystemStatus";
-export { ClawPumpPanel } from "./ClawPumpPanel";
 export { ActivityLog } from "./ActivityLog";
 export { StatusBadge } from "./StatusBadge";
 export { Hint } from "./Hint";

@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { AgentHeader } from "./AgentHeader";
 import { AgentStatus } from "./AgentStatus";
 import { ActivityLog } from "./ActivityLog";
-import { ClawPumpPanel } from "./ClawPumpPanel";
 import { ExecutionPanel } from "./ExecutionPanel";
 import { ProtocolCards } from "./ProtocolCards";
 import { RiskEnginePanel } from "./RiskEnginePanel";
@@ -170,7 +169,6 @@ export function DashboardShell() {
           <div className="flex flex-col gap-5">
             <RiskEnginePanel data={payload} />
             <ExecutionPanel data={payload} />
-            <ClawPumpPanel data={payload} />
             <AgentStatus />
           </div>
         </div>

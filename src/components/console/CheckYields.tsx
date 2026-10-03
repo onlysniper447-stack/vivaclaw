@@ -67,8 +67,8 @@ export function CheckYields({ lastChecked }: { lastChecked: number | null }) {
     const onRun = () => {
       if (!mutation.isPending) mutateRef.current();
     };
-    window.addEventListener("vivaclaw:check", onRun);
-    return () => window.removeEventListener("vivaclaw:check", onRun);
+    window.addEventListener("hettnet:check", onRun);
+    return () => window.removeEventListener("hettnet:check", onRun);
   }, [mutation.isPending]);
 
   const running = mutation.isPending;

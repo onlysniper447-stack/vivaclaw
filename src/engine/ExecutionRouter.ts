@@ -14,7 +14,7 @@ import { getConnection } from "@/lib/solana/connection";
 import { loadAgentKeypair } from "@/lib/solana/wallet";
 import { LAMPORTS_PER_SOL, NATIVE_SOL_MINT, TOKENS } from "@/lib/constants";
 import { logError, logInfo, logWarn } from "@/engine/logger";
-import type { AgentLog, RiskReport, SwapExecution, YieldDelta } from "@/types/vivaclaw";
+import type { AgentLog, RiskReport, SwapExecution, YieldDelta } from "@/types/hettnet";
 
 const SOL_RESERVE_LAMPORTS = 20_000_000n; // 0.02 SOL for fees + rent
 const DEFAULT_JITO_TIP = 200_000;

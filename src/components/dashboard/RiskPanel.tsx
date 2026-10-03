@@ -14,7 +14,6 @@ export function RiskPanel() {
         <li>Max slippage / impact caps enforced before any Jupiter swap.</li>
         <li>Kamino LTV ceiling blocks looped leverage above MAX_LTV_BPS.</li>
         <li>Pyth prints older than ORACLE_MAX_STALENESS_MS halt execution.</li>
-        <li>ClawPump fee is deducted from net APY before ranking.</li>
         <li className="text-claw-amber">
           {dryRun
             ? "Live signing is disabled (AGENT_DRY_RUN=true)."

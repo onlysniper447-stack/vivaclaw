@@ -63,8 +63,8 @@ export function ConsoleApp() {
       <header className="sticky top-0 z-30 border-b border-[#2B313B] bg-[#0A0A0A]">
         <div className="mx-auto flex min-h-16 max-w-[1240px] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.svg" width={30} height={30} alt="" />
-            <span className="font-sans text-[16px] font-semibold tracking-[-0.02em]">VivaClaw</span>
+            <Image src="/logo.svg" width={30} height={30} alt="Hettnet" />
+            <span className="font-sans text-[16px] font-semibold tracking-[-0.02em]">Hettnet</span>
           </Link>
           <Tabs value={tab} tabs={[...TABS]} onChange={select} />
           <div className="ml-auto flex items-center gap-4">

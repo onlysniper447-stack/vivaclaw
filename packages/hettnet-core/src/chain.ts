@@ -1,5 +1,10 @@
 import { createPublicClient, defineChain, http, type PublicClient } from "viem";
-import { HYPEREVM_CHAIN_ID, HYPEREVM_RPC_URL } from "./constants";
+import {
+  HYPEREVM_CHAIN_ID,
+  HYPEREVM_RPC_URL,
+  HYPEREVM_TESTNET_CHAIN_ID,
+  HYPEREVM_TESTNET_RPC_URL,
+} from "./constants";
 
 export const hyperEvm = defineChain({
   id: HYPEREVM_CHAIN_ID,
@@ -7,6 +12,15 @@ export const hyperEvm = defineChain({
   nativeCurrency: { name: "HYPE", symbol: "HYPE", decimals: 18 },
   rpcUrls: {
     default: { http: [HYPEREVM_RPC_URL] },
+  },
+});
+
+export const hyperEvmTestnet = defineChain({
+  id: HYPEREVM_TESTNET_CHAIN_ID,
+  name: "HyperEVM Testnet",
+  nativeCurrency: { name: "HYPE", symbol: "HYPE", decimals: 18 },
+  rpcUrls: {
+    default: { http: [HYPEREVM_TESTNET_RPC_URL] },
   },
 });
 

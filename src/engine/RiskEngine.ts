@@ -8,7 +8,7 @@ import type {
   PegCheck,
   RiskReport,
   VolatilityCheck,
-} from "@/types/vivaclaw";
+} from "@/types/hettnet";
 
 const PEG_TARGET = 1;
 const DEFAULT_CONF_BPS = 50; // confidence band vs spot

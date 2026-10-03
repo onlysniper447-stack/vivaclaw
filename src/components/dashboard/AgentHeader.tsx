@@ -19,11 +19,11 @@ export function AgentHeader() {
     <header className="flex flex-wrap items-center justify-between gap-4">
       <div className="flex items-center gap-4">
         <div className="relative flex size-12 items-center justify-center rounded-2xl border border-claw-amber/35 bg-gradient-to-br from-claw-amber/20 to-transparent font-display text-lg tracking-[0.12em] text-claw-amber shadow-[0_0_32px_rgb(240_180_41/16%)]">
-          VC
+          H
         </div>
         <div>
           <p className="font-display text-[1.65rem] leading-none tracking-[0.22em] text-white">
-            VIVACLAW
+            HETTNET
           </p>
           <p className="mt-1.5 text-[11px] tracking-[0.18em] text-zinc-500 uppercase">
             Solana yield operator · {publicEnv.NEXT_PUBLIC_CLUSTER}

@@ -26,7 +26,7 @@ export function WalletSection() {
             Never to <span className="text-[#FFB81C]">sign.</span>
           </h2>
           <p className="mt-6 max-w-sm font-sans text-[16px] leading-relaxed font-light text-[#C4C8CE]">
-            VivaClaw can attach a public address and read SOL, USDC, and USDT. Connecting is not a
+            Hettnet can attach a public address and read HYPE and HyperEVM tokens. Connecting is not a
             signature and not a transaction.
           </p>
         </div>

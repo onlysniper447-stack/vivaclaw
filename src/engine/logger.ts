@@ -1,4 +1,4 @@
-import type { AgentLog, AgentLogLevel, AgentStatus } from "@/types/vivaclaw";
+import type { AgentLog, AgentLogLevel, AgentStatus } from "@/types/hettnet";
 import { singleton } from "@/engine/singleton";
 
 const MAX_LOGS = 500;
@@ -25,7 +25,7 @@ export function pushLog(entry: Omit<AgentLog, "ts"> & { ts?: number }): AgentLog
     logs.splice(0, logs.length - MAX_LOGS);
   }
 
-  const line = `[vivaclaw:${log.status}] ${log.message}`;
+  const line = `[hettnet:${log.status}] ${log.message}`;
   if (log.level === "error") console.error(line, log.data ?? "");
   else if (log.level === "warn") console.warn(line, log.data ?? "");
   else console.info(line, log.solscanUrl ?? "");

@@ -15,8 +15,8 @@ export function HomePage() {
         <HomeAnimatedBackground />
         <header className="relative z-10 mx-auto flex h-16 max-w-[1240px] items-center justify-between px-5">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.svg" width={30} height={30} alt="" />
-            <span className="font-sans text-[16px] font-semibold">VivaClaw</span>
+            <Image src="/logo.svg" width={30} height={30} alt="Hettnet" />
+            <span className="font-sans text-[16px] font-semibold">Hettnet</span>
           </Link>
           <nav className="flex items-center gap-6 font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">
             <a href="#steps" className="hover:text-[#FFB81C]">How it works</a>
@@ -31,7 +31,7 @@ export function HomePage() {
             See where yield and liquidity <span className="text-[#FFB81C]">earn</span> on Hyperliquid
           </h1>
           <p className="mt-6 max-w-2xl font-sans text-[22px] leading-relaxed font-light text-[#9CA3AF] sm:text-[28px]">
-            VivaClaw reads HyperCore lending and HyperEVM venues, then ranks opportunities for people and AI agents. Indications are informational, not financial advice.
+            Hettnet reads HyperCore lending and HyperEVM venues, then ranks opportunities for people and AI agents. Indications are informational, not financial advice.
           </p>
           <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
             <Button variant="primary" asChild>
@@ -67,7 +67,7 @@ export function HomePage() {
       </section>
 
       <section className="mx-auto max-w-[1240px] px-5 pb-[140px]">
-        <h2 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">What VivaClaw never does</h2>
+        <h2 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">What Hettnet never does</h2>
         <ol className="mt-8 divide-y divide-[#2B313B] border-y border-[#2B313B]">
           <Never n="01" text="Sign, send, or broadcast a transaction." />
           <Never n="02" text="Show, store, or log a private key." />
@@ -76,7 +76,7 @@ export function HomePage() {
       </section>
 
       <footer className="mx-auto max-w-[1240px] px-5 py-8 font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">
-        VIVACLAW · HYPERLIQUID YIELD INTELLIGENCE · READ-ONLY CONSOLE · NOT FINANCIAL ADVICE
+        HETTNET · HYPERLIQUID YIELD INTELLIGENCE · READ-ONLY CONSOLE · NOT FINANCIAL ADVICE
       </footer>
     </div>
   );

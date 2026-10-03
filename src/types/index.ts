@@ -1,9 +1,8 @@
-import type { EngineView } from "./vivaclaw";
+import type { EngineView } from "./hettnet";
 
 export type {
   AgentStatus,
   AgentLog,
-  ClawPumpRevenue,
   EnginePhase,
   EngineView,
   PegCheck,
@@ -15,11 +14,10 @@ export type {
   VolatilityCheck,
   YieldDelta,
   YieldPool,
-} from "./vivaclaw";
+} from "./hettnet";
 
 export type {
   BannerKind,
-  ClawPumpView,
   DashboardPayload,
   LastQuoteView,
   LastTxView,
@@ -31,7 +29,6 @@ export type ProtocolId =
   | "kamino"
   | "meteora"
   | "jupiter"
-  | "clawpump"
   | "raydium"
   | "orca"
   | "hypercore"
@@ -81,7 +78,7 @@ export interface YieldOpportunity {
   estimatedGasSol: number;
   /** Null until a route quote exists. Never substitute 0. */
   priceImpactBps: number | null;
-  clawpumpFeeBps: number;
+  protocolFeeBps: number;
   venueLabel: string;
   updatedAt: number;
 }
@@ -109,7 +106,7 @@ export interface ExecutionResult {
   dryRun: boolean;
   signature?: string;
   error?: string;
-  clawpumpShareAtomic?: string;
+  feeShareAtomic?: string;
   netProfitAtomic?: string;
   loggedAt: number;
 }

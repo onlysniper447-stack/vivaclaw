@@ -5,7 +5,7 @@ import {
   type Indication,
   type Opportunity,
   type VenueSlug,
-} from "vivaclaw-core";
+} from "hettnet-core";
 import { classifyAsset } from "@/engine/classify";
 import { earnedAmount, listActions, listPositions } from "@/engine/positions";
 import { dailyEarn } from "@/lib/accrual";
@@ -20,7 +20,7 @@ import type {
   VenueYieldRow,
   YieldMonitorRow,
 } from "@/types/dashboard";
-import type { EngineView, SourceName, SourceProgress, VenueId } from "@/types/vivaclaw";
+import type { EngineView, SourceName, SourceProgress, VenueId } from "@/types/hettnet";
 
 function skipNetwork(): boolean {
   return process.env.NEXT_PHASE === "phase-production-build";
@@ -293,15 +293,6 @@ export async function getHyperliquidDashboard(): Promise<DashboardPayload> {
       ),
       actions: [...listActions()].reverse(),
     },
-    clawpump: {
-      claimedSolLamports: null,
-      unclaimedSolLamports: null,
-      buybackShareLamports: null,
-      buybackShareBps: env.CLAWPUMP_BUYBACK_BPS,
-      vivaclawMint: "",
-      mintConfigured: false,
-      lastBuyback: { status: "none", at: null },
-    },
     logs: [],
     generatedAt: Date.now(),
   };
@@ -352,15 +343,6 @@ function emptyPayload(triggerBps: number, ceilingBps: number, scanIntervalMs: nu
       lastTx: { status: "none", at: null },
       positions: [],
       actions: [],
-    },
-    clawpump: {
-      claimedSolLamports: null,
-      unclaimedSolLamports: null,
-      buybackShareLamports: null,
-      buybackShareBps: 0,
-      vivaclawMint: "",
-      mintConfigured: false,
-      lastBuyback: { status: "none", at: null },
     },
     logs: [],
     generatedAt: Date.now(),

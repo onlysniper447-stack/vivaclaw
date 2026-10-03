@@ -24,7 +24,7 @@ import { logError, logInfo, logWarn } from "@/engine/logger";
 import { retry, withTimeout } from "@/engine/retry";
 import { ratesFromApy } from "@/engine/rates";
 import { scanLpPools } from "@/engine/sensors/lp";
-import type { SourceProgress, YieldDelta, YieldPool } from "@/types/vivaclaw";
+import type { SourceProgress, YieldDelta, YieldPool } from "@/types/hettnet";
 
 const METEORA_API = "https://merv2-api.meteora.ag";
 const METEORA_API_LEGACY = "https://merv2-api.mercurial.finance";

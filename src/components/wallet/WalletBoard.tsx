@@ -3,14 +3,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { ConnectWallet } from "@/components/wallet/ConnectWallet";
 import { EmptyState } from "@/components/ui/kit";
-import { formatLamportsAsSol } from "@/lib/format";
 import { shortenAddress } from "@/lib/wallet/shorten";
-import { useWalletStore } from "@/store/wallet-store";
+import { useAccount } from "wagmi";
 
 type Holdings = {
   address: string;
-  solLamports: string;
-  tokens: { symbol: string; mint: string; uiAmount: number | null; decimals: number }[];
+  hype: number | null;
+  tokens: { symbol: string; mint: string; uiAmount: number | null; decimals: number; layer: string }[];
+  core: { ok: boolean; balances: { coin: string; total: string }[]; detail: string };
   signed: boolean;
   sent: boolean;
 };
@@ -25,28 +25,28 @@ async function loadHoldings(address: string): Promise<Holdings> {
 }
 
 export function WalletBoard() {
-  const publicKey = useWalletStore((s) => s.publicKey);
-  const status = useWalletStore((s) => s.status);
+  const { address, isConnected } = useAccount();
   const holdings = useQuery({
-    queryKey: ["wallet-holdings", publicKey],
-    queryFn: () => loadHoldings(publicKey!),
-    enabled: Boolean(publicKey),
+    queryKey: ["wallet-holdings", address],
+    queryFn: () => loadHoldings(address!),
+    enabled: Boolean(address),
   });
 
   return (
     <div>
       <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Wallet</h1>
       <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-        Connect to read SOL, USDC, and USDT. This page never signs or sends.
+        Connect to read HYPE, Circle USDC, HyperCore USDC, USDT0, and WHYPE. Connecting never signs.
+        HyperCore USDC and Circle USDC stay separate.
       </p>
       <div className="mt-8 border-t border-[#2B313B] pt-8">
         <ConnectWallet />
       </div>
-      {status !== "connected" || !publicKey ? (
+      {!isConnected || !address ? (
         <div className="mt-8">
           <EmptyState
-            title="No public key attached"
-            body="Connect Phantom or Solflare to read SOL, USDC, and USDT. The wallet popup is a connection grant, not a transaction."
+            title="No public address attached"
+            body="Connect an injected EVM wallet to read HyperEVM and HyperCore balances. The wallet popup is a connection grant, not a transaction."
           />
         </div>
       ) : holdings.isError ? (
@@ -56,37 +56,51 @@ export function WalletBoard() {
       ) : (
         <div className="mt-10 overflow-x-auto">
           <table className="w-full min-w-[520px] text-left">
-            <caption className="sr-only">Read-only holdings for {shortenAddress(publicKey)}</caption>
+            <caption className="sr-only">Read-only holdings for {shortenAddress(address)}</caption>
             <thead>
               <tr className="border-b border-[#2B313B] font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">
                 <th className="py-3 pr-4 font-medium">Asset</th>
+                <th className="py-3 pr-4 font-medium">Layer</th>
                 <th className="py-3 font-medium">Amount</th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-b border-[#2B313B]">
-                <td className="py-4 pr-4 font-sans text-[16px]">SOL</td>
+                <td className="py-4 pr-4 font-sans text-[16px]">HYPE</td>
+                <td className="py-4 pr-4 font-sans text-[16px] text-[#9CA3AF]">HyperEVM</td>
                 <td className="num py-4 font-mono text-[16px]">
-                  {holdings.data ? formatLamportsAsSol(holdings.data.solLamports) : "…"}
+                  {holdings.data?.hype === null || holdings.data?.hype === undefined
+                    ? holdings.isPending
+                      ? "…"
+                      : "unavailable"
+                    : holdings.data.hype.toLocaleString(undefined, { maximumFractionDigits: 6 })}
                 </td>
               </tr>
-              {(holdings.data?.tokens ?? [{ symbol: "USDC" }, { symbol: "USDT" }]).map((token) => (
-                <tr key={token.symbol} className="border-b border-[#2B313B]">
+              {(holdings.data?.tokens ?? []).map((token) => (
+                <tr key={token.mint} className="border-b border-[#2B313B]">
                   <td className="py-4 pr-4 font-sans text-[16px]">{token.symbol}</td>
+                  <td className="py-4 pr-4 font-sans text-[16px] text-[#9CA3AF]">HyperEVM</td>
                   <td className="num py-4 font-mono text-[16px]">
-                    {"uiAmount" in token && token.uiAmount !== undefined && token.uiAmount !== null
-                      ? token.uiAmount.toLocaleString(undefined, { maximumFractionDigits: 6 })
-                      : holdings.isPending
-                        ? "…"
-                        : "0"}
+                    {token.uiAmount === null
+                      ? "unavailable"
+                      : token.uiAmount.toLocaleString(undefined, { maximumFractionDigits: 6 })}
                   </td>
+                </tr>
+              ))}
+              {(holdings.data?.core.balances ?? []).map((row) => (
+                <tr key={`core:${row.coin}`} className="border-b border-[#2B313B]">
+                  <td className="py-4 pr-4 font-sans text-[16px]">{row.coin}</td>
+                  <td className="py-4 pr-4 font-sans text-[16px] text-[#9CA3AF]">HyperCore</td>
+                  <td className="num py-4 font-mono text-[16px]">{row.total}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="num mt-4 font-mono text-[12px] text-[#9CA3AF] uppercase">
-            Signed: no · Sent: no · {shortenAddress(publicKey)}
-          </p>
+          {holdings.data && !holdings.data.core.ok ? (
+            <p className="mt-4 font-sans text-[16px] font-light text-[#9CA3AF]">
+              HyperCore spot balances unavailable ({holdings.data.core.detail}).
+            </p>
+          ) : null}
         </div>
       )}
     </div>

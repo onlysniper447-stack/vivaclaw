@@ -16,9 +16,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VivaClaw",
+  title: "Hettnet",
   description:
-    "VivaClaw is yield and liquidity-pool intelligence for Hyperliquid, for people and AI agents. Indications are informational, not financial advice. Non-custodial: the app never holds funds or keys.",
+    "Hettnet is yield and liquidity-pool intelligence for Hyperliquid, for people and AI agents. Indications are informational, not financial advice. Non-custodial: the app never holds funds or keys.",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/logo.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({

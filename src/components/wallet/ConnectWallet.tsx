@@ -2,26 +2,28 @@
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/kit";
+import { chainLabel } from "@/lib/wallet/evm";
 import { shortenAddress } from "@/lib/wallet/shorten";
-import { useWalletStore } from "@/store/wallet-store";
+import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
+import { hyperEvm, hyperEvmTestnet } from "hettnet-core";
 
 export function ConnectWallet({ compact = false }: { compact?: boolean }) {
-  const status = useWalletStore((s) => s.status);
-  const publicKey = useWalletStore((s) => s.publicKey);
-  const provider = useWalletStore((s) => s.provider);
-  const error = useWalletStore((s) => s.error);
-  const available = useWalletStore((s) => s.available);
-  const connect = useWalletStore((s) => s.connect);
-  const disconnect = useWalletStore((s) => s.disconnect);
+  const { address, isConnected, isConnecting, chainId } = useAccount();
+  const { connect, connectors, error, isPending } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { switchChain, isPending: switching } = useSwitchChain();
+  const connector = connectors[0];
+  const pending = isConnecting || isPending;
 
-  if (compact && status === "connected" && publicKey) {
+  if (compact && isConnected && address) {
     return (
       <div className="flex items-center gap-3">
-        <Chip>{shortenAddress(publicKey)}</Chip>
+        <Chip>{shortenAddress(address)}</Chip>
+        <span className="font-mono text-[12px] text-[#9CA3AF] uppercase">{chainLabel(chainId)}</span>
         <button
           type="button"
           className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase hover:text-[#F5F5F5]"
-          onClick={() => void disconnect()}
+          onClick={() => disconnect()}
         >
           Disconnect
         </button>
@@ -30,15 +32,14 @@ export function ConnectWallet({ compact = false }: { compact?: boolean }) {
   }
 
   if (compact) {
-    const name = available[0];
     return (
       <Button
         variant="outline"
         size="sm"
-        disabled={!name || status === "connecting"}
-        onClick={() => name && void connect(name)}
+        disabled={!connector || pending}
+        onClick={() => connector && connect({ connector })}
       >
-        {status === "connecting" ? "Connecting…" : "Connect wallet"}
+        {pending ? "Connecting…" : "Connect wallet"}
       </Button>
     );
   }
@@ -47,40 +48,53 @@ export function ConnectWallet({ compact = false }: { compact?: boolean }) {
     <div>
       <p className="font-mono text-[11px] tracking-[0.16em] text-[#FFB81C] uppercase">Read-only session</p>
       <p className="mt-2 max-w-md font-sans text-[16px] font-light text-[#9CA3AF]">
-        Connecting shares a public address so holdings can be read. VivaClaw does not sign, send, or
-        broadcast a transaction.
+        Connecting shares a public address so HyperEVM and HyperCore balances can be read. Hettnet
+        does not sign, send, or broadcast a transaction when you connect.
       </p>
-      {status === "connected" && publicKey ? (
+      {isConnected && address ? (
         <div className="mt-6 flex flex-wrap items-center gap-4">
-          <Chip>{shortenAddress(publicKey)}</Chip>
-          <span className="font-mono text-[12px] text-[#9CA3AF] uppercase">{provider}</span>
-          <Button variant="outline" size="sm" onClick={() => void disconnect()}>
+          <Chip>{shortenAddress(address)}</Chip>
+          <span className="font-mono text-[12px] text-[#9CA3AF] uppercase">{chainLabel(chainId)}</span>
+          {chainId !== hyperEvmTestnet.id ? (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={switching}
+              onClick={() => switchChain({ chainId: hyperEvmTestnet.id })}
+            >
+              Use testnet
+            </Button>
+          ) : null}
+          {chainId !== hyperEvm.id ? (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={switching}
+              onClick={() => switchChain({ chainId: hyperEvm.id })}
+            >
+              Use HyperEVM
+            </Button>
+          ) : null}
+          <Button variant="outline" size="sm" onClick={() => disconnect()}>
             Disconnect
           </Button>
         </div>
       ) : (
         <div className="mt-6 flex flex-wrap gap-3">
-          {available.length === 0 ? (
+          {!connector ? (
             <p className="font-sans text-[16px] font-light text-[#9CA3AF]">
-              No browser wallet found. Install Phantom or Solflare. Connecting still never signs.
+              No injected EVM wallet found. Install a browser wallet. Connecting still never signs.
             </p>
           ) : (
-            available.map((name) => (
-              <Button
-                key={name}
-                variant="outline"
-                disabled={status === "connecting"}
-                onClick={() => void connect(name)}
-              >
-                {status === "connecting" && provider === name
-                  ? "Connecting…"
-                  : `Connect ${name === "phantom" ? "Phantom" : "Solflare"}`}
-              </Button>
-            ))
+            <Button variant="outline" disabled={pending} onClick={() => connect({ connector })}>
+              {pending ? "Connecting…" : "Connect EVM wallet"}
+            </Button>
           )}
         </div>
       )}
-      {error ? <p className="mt-4 font-sans text-[14px] text-[#EF4444]">{error}</p> : null}
+      {error ? (
+        <p className="mt-4 font-sans text-[16px] font-light text-[#EF4444]">{error.message}</p>
+      ) : null}
     </div>
   );
 }

@@ -64,5 +64,5 @@ setInterval(() => {
 }, intervalMs);
 
 httpServer.listen(port, () => {
-  console.info(`[vivaclaw] yield feed listening on ws://localhost:${port}`);
+  console.info(`[hettnet] yield feed listening on ws://localhost:${port}`);
 });

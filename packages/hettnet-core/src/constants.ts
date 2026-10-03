@@ -14,6 +14,11 @@ export const MORPHO_GRAPHQL_URL = "https://blue-api.morpho.org/graphql";
 
 export const HYPE_SYSTEM_ADDRESS = "0x2222222222222222222222222222222222222222";
 export const WHYPE_ADDRESS = "0x5555555555555555555555555555555555555555";
+/** Official CoreWriter system contract. Sends HyperEVM txs that HyperCore executes. */
+export const CORE_WRITER_ADDRESS = "0x3333333333333333333333333333333333333333";
+export const HYPERLIQUID_APP_URL = "https://app.hyperliquid.xyz";
+export const HYPERLEND_APP_URL = "https://app.hyperlend.finance";
+export const HYPERSWAP_APP_URL = "https://app.hyperswap.exchange";
 
 /** HyperCore token 0, bridged to HyperEVM. Distinct from Circle USDC. */
 export const HYPERCORE_USDC_EVM = "0x6b9e773128f453f5c2c60935ee2de2cbc5390a24";

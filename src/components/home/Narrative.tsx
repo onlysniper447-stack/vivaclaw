@@ -113,13 +113,13 @@ export function Narrative() {
 
       <section id="steps" className="relative">
         <Stage
-          kicker="How VivaClaw works"
+          kicker="How Hettnet works"
           headline={
             <>
               From yield to <span className="text-[#FFB81C]">action.</span>
             </>
           }
-          body="VivaClaw helps AI agents discover opportunities, evaluate them, and act when the conditions are right."
+          body="Hettnet helps AI agents discover opportunities, evaluate them, and act when the conditions are right."
         >
           <Row index="01" title="Discover opportunities" tag="01 · Discover">
             Monitor supported markets and identify relevant yield opportunities.

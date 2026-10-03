@@ -1,6 +1,6 @@
 /**
  * Read-only LP fee yields.
- * VivaClaw keeps a short list of high-return pools that also clear quality gates.
+ * Hettnet keeps a short list of high-return pools that also clear quality gates.
  * This is not every Solana pool — only watched SOL/stable books on Meteora, Raydium, and Orca.
  * This module never signs or sends.
  */
@@ -9,7 +9,7 @@ import { NATIVE_SOL_MINT, USDC_MINT, USDT_MINT } from "@/lib/constants";
 import { withTimeout } from "@/engine/retry";
 import { logWarn } from "@/engine/logger";
 import { ratesFromApr, toBps } from "@/engine/rates";
-import type { SourceProgress, VenueId, YieldPool } from "@/types/vivaclaw";
+import type { SourceProgress, VenueId, YieldPool } from "@/types/hettnet";
 
 export const LP_MIN_TVL_USD = 250_000;
 export const LP_MIN_VOLUME_24H_USD = 50_000;

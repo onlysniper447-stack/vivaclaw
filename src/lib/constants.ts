@@ -54,7 +54,4 @@ export const YIELD_DELTA_TRIGGER_BPS = 350;
 /** USDC/USDT peg band: ±0.50% = 50 bps. */
 export const PEG_MAX_DEVIATION_BPS = 50;
 
-/** 30% of ClawPump claimed SOL is routed into $VIVACLAW buybacks. */
-export const CLAWPUMP_BUYBACK_BPS = 3_000;
-
 export const DEFAULT_SCAN_ASSETS: TokenRef[] = [TOKENS.SOL, TOKENS.USDC];

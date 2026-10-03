@@ -1,7 +1,7 @@
 import type { Classification } from "@/engine/classify";
-import type { AgentLog, AgentStatus, EngineView, RiskReport, VenueFamily, VenueId } from "@/types/vivaclaw";
+import type { AgentLog, AgentStatus, EngineView, RiskReport, VenueFamily, VenueId } from "@/types/hettnet";
 import type { AgentMode, Cluster } from "@/types";
-import type { Indication, SignalAlert } from "vivaclaw-core";
+import type { Indication, SignalAlert } from "hettnet-core";
 
 export type BannerKind = "safe" | "dry-run" | "circuit-hold" | "error";
 
@@ -123,16 +123,6 @@ export interface PositionActionView {
   message: string;
 }
 
-export interface ClawPumpView {
-  claimedSolLamports: string | null;
-  unclaimedSolLamports: string | null;
-  buybackShareLamports: string | null;
-  buybackShareBps: number;
-  vivaclawMint: string;
-  mintConfigured: boolean;
-  lastBuyback: LastTxView;
-}
-
 export interface DashboardPayload {
   dryRun: boolean;
   cluster: Cluster;
@@ -171,7 +161,6 @@ export interface DashboardPayload {
     positions: PositionView[];
     actions: PositionActionView[];
   };
-  clawpump: ClawPumpView;
   logs: AgentLog[];
   generatedAt: number;
 }

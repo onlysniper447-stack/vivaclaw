@@ -33,7 +33,7 @@ export function ExecutionBoard({ data }: { data: DashboardPayload }) {
       <section>
         <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Execution</h1>
         <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-          Simulate a deposit from an ENTER or WATCH row on Venue yields. AVOID rows stay off this path. Earned yield accrues from that pool&apos;s APR. CLAIM harvests it. WITHDRAW exits. Indications are informational, not financial advice. Nothing is signed or sent.
+          ENTER on Venue yields opens an entry plan: token, layer, approvals, and unsigned calldata. Simulate locally records a dry-run position. Mainnet send is off. Indications are informational, not financial advice. Connecting a wallet never signs.
         </p>
         {act.isError ? (
           <p className="mt-4 font-sans text-[16px] font-light text-[#EF4444]">
@@ -55,7 +55,7 @@ export function ExecutionBoard({ data }: { data: DashboardPayload }) {
           <div className="mt-8">
             <EmptyState
               title="No open pool"
-              body="ENTER a lend or LP row on Venue yields. A simulated size is used (1 SOL or 1,000 stables)."
+              body="ENTER a lend or LP row on Venue yields. The entry plan encodes 1 unit of stables or 0.01 HYPE. Simulate locally records a dry-run position. Mainnet send is off."
             />
           </div>
         ) : (
@@ -195,20 +195,6 @@ export function ExecutionBoard({ data }: { data: DashboardPayload }) {
           </ul>
         </section>
       ) : null}
-
-      <section>
-        <h2 className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">Fee share</h2>
-        {data.clawpump.claimedSolLamports === null ? (
-          <p className="mt-3 font-sans text-[16px] font-light text-[#9CA3AF]">
-            ClawPump has not reported claimed fees in this process.
-          </p>
-        ) : (
-          <p className="num mt-3 font-mono text-[14px]" title={utcStamp(data.clawpump.lastBuyback.at)}>
-            Claimed {data.clawpump.claimedSolLamports} lamports · buyback share {data.clawpump.buybackShareBps} bps ·{" "}
-            {freshnessLabel(data.clawpump.lastBuyback.at)}
-          </p>
-        )}
-      </section>
     </div>
   );
 }

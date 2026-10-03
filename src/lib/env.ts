@@ -26,9 +26,6 @@ const ServerEnvSchema = z.object({
   JUPITER_API_URL: z.string().url().default("https://lite-api.jup.ag/swap/v1"),
   JUPITER_API_KEY: z.string().optional().default(""),
   JUPITER_SLIPPAGE_BPS: z.coerce.number().int().min(1).max(1_000).default(50),
-  CLAWPUMP_API_URL: z.string().url().default("https://api.clawpump.io/v1"),
-  CLAWPUMP_API_KEY: z.string().default(""),
-  CLAWPUMP_FEE_BPS: z.coerce.number().int().min(0).max(1_000).default(30),
   PYTH_HERMES_URL: z.string().url().default("https://hermes.pyth.network"),
   PYTH_API_KEY: z.string().optional().default(""),
   ORACLE_MAX_STALENESS_MS: z.coerce.number().int().min(1_000).max(120_000).default(15_000),
@@ -38,7 +35,6 @@ const ServerEnvSchema = z.object({
   MIN_NET_APY_BPS: z.coerce.number().int().min(0).max(100_000).default(150),
   MAX_PRICE_IMPACT_BPS: z.coerce.number().int().min(1).max(2_000).default(80),
   SCAN_INTERVAL_MS: z.coerce.number().int().min(3_000).max(300_000).default(15_000),
-  VIVACLAW_MINT: z.string().default(""),
   YIELD_DELTA_TRIGGER_BPS: z.coerce.number().int().min(1).max(10_000).default(350),
   APY_SANITY_CEILING_BPS: z.coerce.number().int().min(100).max(100_000).default(3_000),
   APY_SANITY_RATIO: z.coerce.number().positive().max(100).default(5),
@@ -49,7 +45,6 @@ const ServerEnvSchema = z.object({
     .string()
     .optional()
     .or(z.literal("").transform(() => undefined)),
-  CLAWPUMP_BUYBACK_BPS: z.coerce.number().int().min(0).max(10_000).default(3_000),
   EXECUTION_COOLDOWN_MS: z.coerce.number().int().min(0).max(3_600_000).default(60_000),
 });
 
@@ -69,9 +64,6 @@ export function getServerEnv(): ServerEnv {
     JUPITER_API_URL: process.env.JUPITER_API_URL,
     JUPITER_API_KEY: process.env.JUPITER_API_KEY,
     JUPITER_SLIPPAGE_BPS: process.env.JUPITER_SLIPPAGE_BPS,
-    CLAWPUMP_API_URL: process.env.CLAWPUMP_API_URL,
-    CLAWPUMP_API_KEY: process.env.CLAWPUMP_API_KEY,
-    CLAWPUMP_FEE_BPS: process.env.CLAWPUMP_FEE_BPS,
     PYTH_HERMES_URL: process.env.PYTH_HERMES_URL,
     PYTH_API_KEY: process.env.PYTH_API_KEY,
     ORACLE_MAX_STALENESS_MS: process.env.ORACLE_MAX_STALENESS_MS,
@@ -81,7 +73,6 @@ export function getServerEnv(): ServerEnv {
     MIN_NET_APY_BPS: process.env.MIN_NET_APY_BPS,
     MAX_PRICE_IMPACT_BPS: process.env.MAX_PRICE_IMPACT_BPS,
     SCAN_INTERVAL_MS: process.env.SCAN_INTERVAL_MS,
-    VIVACLAW_MINT: process.env.VIVACLAW_MINT,
     YIELD_DELTA_TRIGGER_BPS: process.env.YIELD_DELTA_TRIGGER_BPS,
     APY_SANITY_CEILING_BPS: process.env.APY_SANITY_CEILING_BPS,
     APY_SANITY_RATIO: process.env.APY_SANITY_RATIO,
@@ -89,7 +80,6 @@ export function getServerEnv(): ServerEnv {
     VOLATILITY_MAX_BPS: process.env.VOLATILITY_MAX_BPS,
     JITO_TIP_LAMPORTS: process.env.JITO_TIP_LAMPORTS,
     JITO_RPC_URL: process.env.JITO_RPC_URL,
-    CLAWPUMP_BUYBACK_BPS: process.env.CLAWPUMP_BUYBACK_BPS,
     EXECUTION_COOLDOWN_MS: process.env.EXECUTION_COOLDOWN_MS,
   });
   return cached;

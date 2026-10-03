@@ -55,7 +55,7 @@ export function ActivityBoard({ data }: { data: DashboardPayload }) {
         <Button
           variant="link"
           onClick={() =>
-            downloadCsv("vivaclaw-activity.csv", [
+            downloadCsv("hettnet-activity.csv", [
               ["time_utc", "level", "status", "message"],
               ...slice.map((log) => [new Date(log.ts).toISOString(), log.level, log.status, cleanText(log.message)]),
             ])

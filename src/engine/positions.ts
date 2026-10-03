@@ -11,7 +11,7 @@ import { yieldSensor } from "@/engine/YieldSensor";
 import { getStoredOpportunity } from "@/engine/opportunity-store";
 import { venueFamily } from "@/lib/venues";
 import { aprFromApy, toBps } from "@/engine/rates";
-import type { VenueFamily, VenueId } from "@/types/vivaclaw";
+import type { VenueFamily, VenueId } from "@/types/hettnet";
 
 export { dailyEarn, earnedFromApr, YEAR_MS } from "@/lib/accrual";
 const MAX_ACTIONS = 80;

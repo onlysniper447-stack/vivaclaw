@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { discoverOpportunities } from "vivaclaw-core";
+import { discoverOpportunities } from "hettnet-core";
 import { setOpportunitySnapshot } from "@/engine/opportunity-store";
 
 export const runtime = "nodejs";

@@ -28,8 +28,8 @@
       "@/*": [
         "./src/*"
       ],
-      "vivaclaw-core": [
-        "./packages/vivaclaw-core/src/index.ts"
+      "hettnet-core": [
+        "./packages/hettnet-core/src/index.ts"
       ]
     }
   },
@@ -37,7 +37,7 @@
     "next-env.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "packages/vivaclaw-core/src/**/*.ts",
+    "packages/hettnet-core/src/**/*.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],

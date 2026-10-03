@@ -6,7 +6,7 @@ import { Hint } from "./Hint";
 import { formatBps } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import type { DashboardPayload } from "@/types/dashboard";
-import type { PegCheck } from "@/types/vivaclaw";
+import type { PegCheck } from "@/types/hettnet";
 
 function PegMeter({ peg }: { peg: PegCheck }) {
   const signedBps = Math.round(((peg.price - peg.target) / peg.target) * 10_000);

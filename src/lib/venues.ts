@@ -1,4 +1,4 @@
-import type { VenueFamily, VenueId } from "@/types/vivaclaw";
+import type { VenueFamily, VenueId } from "@/types/hettnet";
 
 export function venueLabel(venue: VenueId): string {
   switch (venue) {

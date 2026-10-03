@@ -1,5 +1,5 @@
 /**
- * VIVACLAW core engine contracts.
+ * Hettnet core engine contracts.
  * APY fields are decimal fractions unless suffixed with `Bps` (0.085 = 8.5% = 850 bps).
  */
 
@@ -131,18 +131,6 @@ export interface AgentLog {
   signature?: string;
   solscanUrl?: string;
   data?: Record<string, unknown>;
-}
-
-export interface ClawPumpRevenue {
-  wallet: string;
-  claimedSolLamports: string;
-  unclaimedSolLamports: string;
-  lifetimeSolLamports: string;
-  /** 30% of claimed SOL allocated to $VIVACLAW buyback. */
-  buybackShareLamports: string;
-  buybackShareBps: number;
-  updatedAt: number;
-  raw?: Record<string, unknown>;
 }
 
 export interface SwapExecution {

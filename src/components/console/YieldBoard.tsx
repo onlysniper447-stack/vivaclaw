@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { usePoolAction } from "@/components/console/usePoolAction";
+import { EntryPlanPanel } from "@/components/console/EntryPlan";
 import { Drawer, EmptyState, Field, Segmented, Sparkline, Stat, StatusDot } from "@/components/ui/kit";
 import { cleanText, downloadCsv, formatPercentBps, formatSignedBps, freshnessLabel, indicationTone, statusText, utcStamp } from "@/lib/present";
 import { venueLabel } from "@/lib/venues";
 import type { DashboardPayload, VenueYieldRow, YieldMonitorRow } from "@/types/dashboard";
-import type { VenueFamily } from "@/types/vivaclaw";
-import type { Indication } from "vivaclaw-core";
+import type { VenueFamily } from "@/types/hettnet";
+import type { Indication } from "hettnet-core";
 
 const INDICATION_ORDER: Record<Indication, number> = { ENTER: 0, WATCH: 1, AVOID: 2 };
 
@@ -54,7 +54,6 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
   const [open, setOpen] = useState<VenueYieldRow | null>(null);
   const [gapPage, setGapPage] = useState(1);
   const trigger = (data.yields.triggerBps / 100).toFixed(1);
-  const enter = usePoolAction();
   const openPools = new Set(
     (data.execution.positions ?? []).filter((row) => row.status === "open").map((row) => row.poolId),
   );
@@ -85,7 +84,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
   const bestApy = bestBy(filtered, "apyBps");
 
   function exportVenues() {
-    downloadCsv("vivaclaw-venue-yields.csv", [
+    downloadCsv("hettnet-venue-yields.csv", [
       ["asset", "mint", "venue", "apr", "apy", "indication", "reasons", "quality", "source", "updated"],
       ...slice.map((row) => [
         cleanText(row.symbol),
@@ -134,7 +133,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
           <div>
             <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Venue yields</h1>
             <p className="mt-2 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-              One row is one venue with an ENTER, WATCH, or AVOID indication and reasons. Simulate a deposit from an ENTER or WATCH row. Claim or withdraw on Execution.
+              One row is one venue with an ENTER, WATCH, or AVOID indication and reasons. ENTER opens an entry plan. Claim or withdraw on Execution.
             </p>
           </div>
           <p className="num font-mono text-[12px] text-[#9CA3AF]">{filtered.length} rates</p>
@@ -171,11 +170,6 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
         {kinkAlerts.length > 0 ? (
           <p className="mt-4 border-l-2 border-[#FFB81C] pl-4 font-sans text-[16px] font-light text-[#F5F5F5]">
             Kink-proximity: {kinkAlerts.map((row) => cleanText(row.symbol)).join(", ")}. Borrow APY steps up above 80% utilization.
-          </p>
-        ) : null}
-        {enter.isError ? (
-          <p className="mt-4 font-sans text-[16px] font-light text-[#EF4444]">
-            {enter.error instanceof Error ? enter.error.message : "ENTER did not finish."}
           </p>
         ) : null}
         <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -234,7 +228,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
                 <th className="py-3 pr-4 font-medium">APR</th>
                 <th className="py-3 pr-4 font-medium">APY</th>
                 <th className="py-3 pr-4 font-medium">Indication</th>
-                <th className="py-3 font-medium">Simulate</th>
+                <th className="py-3 font-medium">Plan</th>
               </tr>
             </thead>
             <tbody>
@@ -266,9 +260,8 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
                     <td className="py-4">
                       <EnterButton
                         row={row}
-                        open={openPools.has(row.id)}
-                        pending={enter.isPending && enter.variables?.poolId === row.id}
-                        onEnter={() => enter.mutate({ action: "enter", poolId: row.id })}
+                        alreadyOpen={openPools.has(row.id)}
+                        onEnter={() => setOpen(row)}
                       />
                     </td>
                   </tr>
@@ -289,7 +282,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
           <Button
             variant="link"
             onClick={() =>
-              downloadCsv("vivaclaw-gaps.csv", [
+              downloadCsv("hettnet-gaps.csv", [
                 ["asset", "mint", "gap_percent", "status", "updated"],
                 ...gapSlice.map((row) => [
                   cleanText(row.symbol),
@@ -323,15 +316,13 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
         <Pager page={safeGap} pages={gapPages} onPage={setGapPage} />
       </section>
 
-      <Drawer open={open !== null} title={open ? cleanText(open.symbol) : "Rate"} onClose={() => setOpen(null)}>
+      <Drawer
+        open={open !== null}
+        title={open ? `${cleanText(open.symbol)} · ${open.indication}` : "Entry plan"}
+        onClose={() => setOpen(null)}
+      >
         {open ? (
-          <VenueDetail
-            row={open}
-            feeLabel={`${open.feeBps} bps fee assumption`}
-            open={openPools.has(open.id)}
-            pending={enter.isPending && enter.variables?.poolId === open.id}
-            onEnter={() => enter.mutate({ action: "enter", poolId: open.id })}
-          />
+          <VenueDetail row={open} feeLabel={`${open.feeBps} bps fee assumption`} alreadyOpen={openPools.has(open.id)} />
         ) : null}
       </Drawer>
     </div>
@@ -359,16 +350,14 @@ function canEnter(row: VenueYieldRow): boolean {
 
 function EnterButton({
   row,
-  open,
-  pending,
+  alreadyOpen,
   onEnter,
 }: {
   row: VenueYieldRow;
-  open: boolean;
-  pending: boolean;
+  alreadyOpen: boolean;
   onEnter: () => void;
 }) {
-  if (open) {
+  if (alreadyOpen) {
     return (
       <Button variant="link" asChild>
         <a href="/dashboard?tab=execution">OPEN</a>
@@ -379,10 +368,10 @@ function EnterButton({
     <button
       type="button"
       className="font-mono text-[12px] tracking-[0.08em] text-[#FFB81C] uppercase disabled:text-[#9CA3AF]"
-      disabled={!canEnter(row) || pending}
+      disabled={!canEnter(row)}
       onClick={onEnter}
     >
-      {pending ? "ENTERING…" : "ENTER"}
+      ENTER
     </button>
   );
 }
@@ -390,17 +379,14 @@ function EnterButton({
 function VenueDetail({
   row,
   feeLabel,
-  open,
-  pending,
-  onEnter,
+  alreadyOpen,
 }: {
   row: VenueYieldRow;
   feeLabel: string;
-  open: boolean;
-  pending: boolean;
-  onEnter: () => void;
+  alreadyOpen: boolean;
 }) {
   const net = row.grossApyBps === null ? null : row.grossApyBps - row.feeBps;
+  const showPlan = row.indication !== "AVOID";
   return (
     <div className="grid gap-5 font-sans text-[16px] font-light">
       <p>{venueLabel(row.venue)}</p>
@@ -421,8 +407,16 @@ function VenueDetail({
         ))}
       </ul>
       {row.unusualReason ? <p className="text-[#FFB81C]">{row.unusualReason}</p> : null}
-      <p className="text-[#9CA3AF]">Indications are informational, not financial advice.</p>
-      <EnterButton row={row} open={open} pending={pending} onEnter={onEnter} />
+      {showPlan ? (
+        <div className="border-t border-[#2B313B] pt-5">
+          <p className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">Entry plan</p>
+          <div className="mt-4">
+            <EntryPlanPanel poolId={row.id} canSimulate={canEnter(row)} alreadyOpen={alreadyOpen} />
+          </div>
+        </div>
+      ) : (
+        <p className="text-[#9CA3AF]">AVOID — no entry plan. Mainnet send is off.</p>
+      )}
     </div>
   );
 }

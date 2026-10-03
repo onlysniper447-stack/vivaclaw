@@ -4,11 +4,10 @@ import { tryLoadAgentPubkey } from "@/lib/solana/wallet";
 import { yieldSensor } from "@/engine/YieldSensor";
 import { riskEngine } from "@/engine/RiskEngine";
 import { executionRouter } from "@/engine/ExecutionRouter";
-import { clawPumpEngine } from "@/engine/ClawPumpEngine";
 import { probeJupiter } from "@/engine/probes";
 import { getAgentLogs, logInfo, logWarn } from "@/engine/logger";
 import type { AgentSnapshot, ExecutionResult, OpportunityKind, ProtocolId, YieldOpportunity } from "@/types";
-import type { AgentStatus, EngineView, SourceName, SourceProgress, VenueId, YieldDelta, YieldPool } from "@/types/vivaclaw";
+import type { AgentStatus, EngineView, SourceName, SourceProgress, VenueId, YieldDelta, YieldPool } from "@/types/hettnet";
 import { venueLabel } from "@/lib/venues";
 
 function idleSource(): SourceProgress {
@@ -46,7 +45,7 @@ const live = singleton("agent.aprApy", () => {
   return {
     engineState: initialEngine,
     snapshot: initialSnapshot,
-    vivaclawStatus: "IDLE" as AgentStatus,
+    agentStatus: "IDLE" as AgentStatus,
     scanCount: 0,
     scanInflight: null as Promise<AgentSnapshot> | null,
   };
@@ -104,14 +103,14 @@ function opportunityFromPool(pool: YieldPool, feeBps: number): YieldOpportunity 
     liquidityUsd: Number(pool.liquidityAtomic) / 10 ** pool.decimals,
     estimatedGasSol: 0.002,
     priceImpactBps: null,
-    clawpumpFeeBps: feeBps,
+    protocolFeeBps: feeBps,
     venueLabel: venueLabel(pool.venue),
     updatedAt: pool.updatedAt,
   };
 }
 
 function toOpportunities(deltas: YieldDelta[], lpPools: YieldPool[]): YieldOpportunity[] {
-  const feeBps = getServerEnv().CLAWPUMP_FEE_BPS;
+  const feeBps = 0;
   const rows: YieldOpportunity[] = [];
   for (const delta of deltas) {
     for (const pool of [delta.kamino, delta.meteora]) {
@@ -126,8 +125,8 @@ function toOpportunities(deltas: YieldDelta[], lpPools: YieldPool[]): YieldOppor
   return rows;
 }
 
-export function getVivaclawStatus(): AgentStatus {
-  return live.vivaclawStatus;
+export function getAgentStatus(): AgentStatus {
+  return live.agentStatus;
 }
 
 export function getEngineView(): EngineView {
@@ -154,7 +153,7 @@ export async function scanOnce(): Promise<AgentSnapshot> {
 }
 
 async function runScan(): Promise<AgentSnapshot> {
-  live.vivaclawStatus = "SCANNING";
+  live.agentStatus = "SCANNING";
   live.engineState = {
     phase: "scanning",
     reason: null,
@@ -174,7 +173,7 @@ async function runScan(): Promise<AgentSnapshot> {
   };
 
   try {
-    const { discoverOpportunities } = await import("vivaclaw-core");
+    const { discoverOpportunities } = await import("hettnet-core");
     const { setOpportunitySnapshot } = await import("@/engine/opportunity-store");
     const result = await discoverOpportunities();
     setOpportunitySnapshot(result.opportunities, result.fetchedAt, result.errors);
@@ -211,7 +210,7 @@ async function runScan(): Promise<AgentSnapshot> {
         liquidityUsd: opp.tvl ?? 0,
         estimatedGasSol: 0,
         priceImpactBps: null,
-        clawpumpFeeBps: 0,
+        protocolFeeBps: 0,
         venueLabel: venueLabel(opp.venue),
         updatedAt: opp.fetchedAt,
       };
@@ -229,7 +228,7 @@ async function runScan(): Promise<AgentSnapshot> {
     };
     live.snapshot.mode = failed ? "halted" : "idle";
     live.snapshot.haltReason = live.engineState.reason;
-    live.vivaclawStatus = "IDLE";
+    live.agentStatus = "IDLE";
     logInfo("SCANNING", `Hyperliquid discovery returned ${result.opportunities.length} opportunities.`);
     return getAgentSnapshot();
   } catch (error) {
@@ -241,7 +240,7 @@ async function runScan(): Promise<AgentSnapshot> {
     };
     live.snapshot.mode = "halted";
     live.snapshot.haltReason = reason;
-    live.vivaclawStatus = "IDLE";
+    live.agentStatus = "IDLE";
     logWarn("IDLE", reason);
     return getAgentSnapshot();
   }

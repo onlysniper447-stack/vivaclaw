@@ -1,5 +1,5 @@
 import { singleton } from "@/engine/singleton";
-import type { Opportunity } from "vivaclaw-core";
+import type { Opportunity } from "hettnet-core";
 
 const live = singleton("hl.opportunities", () => ({
   items: [] as Opportunity[],

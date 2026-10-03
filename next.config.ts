@@ -31,7 +31,7 @@ const nextConfig: NextConfig = {
     ];
   },
   outputFileTracingRoot: projectRoot,
-  transpilePackages: ["vivaclaw-core"],
+  transpilePackages: ["hettnet-core"],
   serverExternalPackages: [
     "@solana/web3.js",
     "@solana/kit",
