@@ -27,9 +27,22 @@ export type {
   YieldMonitorRow,
 } from "./dashboard";
 
-export type ProtocolId = "kamino" | "meteora" | "jupiter" | "clawpump" | "raydium" | "orca";
+export type ProtocolId =
+  | "kamino"
+  | "meteora"
+  | "jupiter"
+  | "clawpump"
+  | "raydium"
+  | "orca"
+  | "hypercore"
+  | "hyperlend"
+  | "felix"
+  | "morpho"
+  | "hyperswap"
+  | "kittenswap"
+  | "projectx";
 
-export type Cluster = "mainnet-beta" | "devnet" | "testnet";
+export type Cluster = "mainnet-beta" | "devnet" | "testnet" | "hyperliquid";
 
 export type AgentMode = "idle" | "scanning" | "evaluating" | "executing" | "halted";
 

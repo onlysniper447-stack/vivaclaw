@@ -12,9 +12,10 @@ import type { VenueFamily } from "@/types/vivaclaw";
 const PAGE = 25;
 
 const COVERAGE =
-  "This is not every Solana pool. VivaClaw watches SOL/USDC, SOL/USDT, and USDC/USDT on Meteora, Raydium, and Orca, then keeps the best books.";
+  "HyperCore native lend, HyperLend, Felix/Morpho vaults, HyperSwap, Kittenswap, and Project X. Missing numbers stay unavailable.";
 
-const RATE_COPY = "APR is simple (daily × 365). APY compounds that same daily rate.";
+const RATE_COPY =
+  "APY is the venue print. APR is shown only when the venue publishes a simple rate — it is never invented from APY.";
 
 function bestBy(rows: VenueYieldRow[], key: "aprBps" | "apyBps"): VenueYieldRow | null {
   return rows.reduce<VenueYieldRow | null>((best, row) => {
@@ -26,10 +27,15 @@ function bestBy(rows: VenueYieldRow[], key: "aprBps" | "apyBps"): VenueYieldRow 
 }
 
 function RateCell({ bps, quality }: { bps: number | null; quality: VenueYieldRow["quality"] }) {
+  if (quality === "suspect" || bps === 0) {
+    return (
+      <span className="font-sans text-[16px] font-light text-[#9CA3AF] italic">Check data</span>
+    );
+  }
   if (quality === "missing" || bps === null) {
     return (
       <span className="font-sans text-[16px] font-light text-[#9CA3AF] italic">
-        {quality === "suspect" || bps === 0 ? "Check data" : "no pool"}
+        {quality === "ok" || bps === null ? "unavailable" : "no pool"}
       </span>
     );
   }
@@ -100,7 +106,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
               data.lastScanAt
                 ? data.engine.reason ??
                   "The last check did not return a lend print or a high-return LP."
-                : "A check reads Kamino, Meteora vaults, and high-return SOL/stable LPs on Meteora, Raydium, and Orca. Thin, quiet, or off-pair books stay off this list."
+                : "A check reads HyperCore lend, HyperLend, Felix/Morpho, HyperSwap, Kittenswap, and Project X. Missing rates stay unavailable."
             }
           />
         </div>
@@ -225,7 +231,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
       <section>
         <h2 className="font-sans text-[28px] font-semibold tracking-[-0.02em]">Cross-venue gaps</h2>
         <p className="mt-2 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-          A gap is Meteora minus Kamino. It is a spread, not an investable yield. The trigger is {trigger}% and is set in server config.
+          A gap is HyperEVM lend minus HyperCore for the same token. It is a spread, not an investable yield. HyperCore USDC and Circle USDC stay separate. The trigger is {trigger}% and is set in server config.
         </p>
         <div className="mt-4">
           <Button
@@ -296,7 +302,7 @@ function GapLine({ row }: { row: YieldMonitorRow }) {
 }
 
 function canEnter(row: VenueYieldRow): boolean {
-  return row.quality === "ok" && row.aprBps !== null && row.aprBps > 0 && row.apyBps !== null && row.apyBps > 0;
+  return row.quality === "ok" && row.apyBps !== null && row.apyBps > 0;
 }
 
 function EnterButton({

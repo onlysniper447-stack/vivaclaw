@@ -28,11 +28,11 @@ const emptySnapshot = (): AgentSnapshot => ({
     reason: null,
     lastSuccessAt: null,
     sources: {
-      kamino: { state: "idle", message: null },
-      meteora: { state: "idle", message: null },
-      lp: { state: "idle", message: null },
-      jupiter: { state: "idle", message: null },
-      pyth: { state: "idle", message: null },
+      hypercore: { state: "idle", message: null },
+      llama: { state: "idle", message: null },
+      morpho: { state: "idle", message: null },
+      dexscreener: { state: "idle", message: null },
+      hyperlend: { state: "idle", message: null },
     },
   },
 });

@@ -7,18 +7,8 @@ import { Narrative } from "@/components/home/Narrative";
 import { WalletSection } from "@/components/home/WalletSection";
 import { Button } from "@/components/ui/button";
 import { Chip, EmptyState } from "@/components/ui/kit";
-import { publicEnv } from "@/lib/public-env";
-
-const CLUSTER_LABEL = {
-  "mainnet-beta": "Mainnet-beta",
-  devnet: "devnet",
-  testnet: "testnet",
-} as const;
 
 export function HomePage() {
-  const cluster = publicEnv.NEXT_PUBLIC_CLUSTER;
-  const clusterLabel = CLUSTER_LABEL[cluster];
-
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F5F5F5]">
       <div className="relative isolate overflow-hidden">
@@ -36,12 +26,12 @@ export function HomePage() {
         </header>
 
         <section className="relative z-10 mx-auto flex min-h-[calc(100vh-64px)] max-w-[1240px] flex-col items-start justify-end px-5 pb-16">
-          <Chip>Solana · {clusterLabel} · Read-only</Chip>
+          <Chip>Hyperliquid · Detect → Evaluate → Enter · Read-only</Chip>
           <h1 className="mt-8 max-w-5xl font-sans text-[48px] leading-[1.02] font-bold tracking-[-0.05em] sm:text-[72px] lg:text-[96px]">
-            See where your stablecoins <span className="text-[#FFB81C]">earn</span> the most
+            See where yield and liquidity <span className="text-[#FFB81C]">earn</span> on Hyperliquid
           </h1>
           <p className="mt-6 max-w-2xl font-sans text-[22px] leading-relaxed font-light text-[#9CA3AF] sm:text-[28px]">
-            VivaClaw compares Solana lending rates on Meteora and Kamino and tells you when the gap is worth acting on.
+            VivaClaw reads HyperCore lending and HyperEVM venues, then ranks opportunities for people and AI agents. Indications are informational, not financial advice.
           </p>
           <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
             <Button variant="primary" asChild>
@@ -57,7 +47,7 @@ export function HomePage() {
       <section className="mx-auto max-w-[1240px] px-5 pb-[140px]">
         <div className="grid border border-[#2B313B] sm:grid-cols-2 lg:grid-cols-4">
           <Figure label="Rates tracked" value="—" note="Open the console to check" />
-          <Figure label="Sources" value="6" note="Lend and high-return LP" />
+          <Figure label="Sources" value="6" note="HyperCore, HyperLend, Felix, HyperSwap, Kittenswap, Project X" />
           <Figure label="Trigger" value="3.5%" note="Server config" />
           <Figure label="Funds moved" value="0" note="No transaction is broadcast" />
         </div>
@@ -71,7 +61,7 @@ export function HomePage() {
         <div className="mt-8">
           <EmptyState
             title="No comparable gap"
-            body="There is no pair with both a Meteora rate and a Kamino rate yet. Open the console to check yields. That is left blank on purpose."
+            body="Open the console to read HyperCore and HyperEVM venues. A missing rate stays blank. That is left blank on purpose."
           />
         </div>
       </section>
@@ -86,7 +76,7 @@ export function HomePage() {
       </section>
 
       <footer className="mx-auto max-w-[1240px] px-5 py-8 font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">
-        VIVACLAW · SOLANA YIELD OPERATOR · {cluster.toUpperCase()} · READ-ONLY CONSOLE
+        VIVACLAW · HYPERLIQUID YIELD INTELLIGENCE · READ-ONLY CONSOLE · NOT FINANCIAL ADVICE
       </footer>
     </div>
   );

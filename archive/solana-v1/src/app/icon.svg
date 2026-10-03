@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="32" height="32" role="img" aria-label="VivaClaw">
+  <rect x="1" y="1" width="46" height="46" rx="6" fill="#0A0A0A" stroke="#FFB81C" stroke-width="1.5"/>
+  <path d="M11 12 Q17 28 24 39 Q21 23 17 12 Z" fill="#FFB81C"/>
+  <path d="M37 12 Q31 28 24 39 Q27 23 31 12 Z" fill="#FFB81C"/>
+  <circle cx="24" cy="12" r="2.6" fill="#34D399"/>
+</svg>

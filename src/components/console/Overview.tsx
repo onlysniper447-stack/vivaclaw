@@ -86,7 +86,7 @@ export function Overview({ data }: { data: DashboardPayload }) {
           <Stat
             label="Largest gap"
             value={largest?.deltaApyBps === null || largest === null ? "—" : formatSignedBps(largest.deltaApyBps)}
-            source={largest ? cleanText(largest.symbol) : "Meteora − Kamino"}
+            source={largest ? cleanText(largest.symbol) : "HyperEVM − HyperCore"}
             time={freshnessLabel(largest?.updatedAt ?? data.lastScanAt)}
           />
           <Stat
@@ -110,7 +110,7 @@ export function Overview({ data }: { data: DashboardPayload }) {
               body={
                 data.lastScanAt
                   ? data.engine.reason ??
-                    "Kamino and Meteora did not return a usable pair. Missing rates stay blank."
+                    "HyperCore and HyperEVM lending did not return a usable pair. Missing rates stay blank."
                   : "Run a check. Missing venues stay blank. A missing rate is never turned into a number."
               }
             />
@@ -118,12 +118,12 @@ export function Overview({ data }: { data: DashboardPayload }) {
         ) : (
           <div className="mt-8 overflow-x-auto">
             <table className="w-full min-w-[720px] text-left">
-              <caption className="sr-only">Cross-venue gaps, Meteora minus Kamino</caption>
+              <caption className="sr-only">Cross-venue gaps, HyperEVM lend minus HyperCore</caption>
               <thead>
                 <tr className="border-b border-[#2B313B]">
                   <th className="py-3 pr-4" aria-sort={sort.key === "asset" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="Asset" active={sort.key === "asset"} direction={sort.dir} onClick={() => toggle("asset")} /></th>
-                  <th className="py-3 pr-4" aria-sort={sort.key === "meteora" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="Meteora" active={sort.key === "meteora"} direction={sort.dir} onClick={() => toggle("meteora")} /></th>
-                  <th className="py-3 pr-4" aria-sort={sort.key === "kamino" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="Kamino" active={sort.key === "kamino"} direction={sort.dir} onClick={() => toggle("kamino")} /></th>
+                  <th className="py-3 pr-4" aria-sort={sort.key === "meteora" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="HyperEVM" active={sort.key === "meteora"} direction={sort.dir} onClick={() => toggle("meteora")} /></th>
+                  <th className="py-3 pr-4" aria-sort={sort.key === "kamino" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="HyperCore" active={sort.key === "kamino"} direction={sort.dir} onClick={() => toggle("kamino")} /></th>
                   <th className="py-3 pr-4" aria-sort={sort.key === "gap" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="Gap" active={sort.key === "gap"} direction={sort.dir} onClick={() => toggle("gap")} /></th>
                   <th className="py-3" aria-sort={sort.key === "status" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="Status" active={sort.key === "status"} direction={sort.dir} onClick={() => toggle("status")} /></th>
                 </tr>
@@ -245,8 +245,8 @@ function Expanded({ row, onClose }: { row: YieldMonitorRow; onClose: () => void 
         </button>
       </div>
       <dl className="mt-4 grid gap-2 font-mono text-[13px] text-[#9CA3AF]">
-        <div>Meteora raw: {row.meteoraApyBps === null ? "no pool" : `${row.meteoraApyBps} bps`}</div>
-        <div>Kamino raw: {row.kaminoApyBps === null ? "no pool" : `${row.kaminoApyBps} bps`}</div>
+        <div>HyperEVM raw: {row.meteoraApyBps === null ? "no pool" : `${row.meteoraApyBps} bps`}</div>
+        <div>HyperCore raw: {row.kaminoApyBps === null ? "no pool" : `${row.kaminoApyBps} bps`}</div>
         <div>Gap raw: {row.deltaApyBps === null ? "not comparable" : `${row.deltaApyBps} bps`}</div>
         <div>Source: {cleanText(row.source)}</div>
         <div title={utcStamp(row.updatedAt)}>Read: {freshnessLabel(row.updatedAt)} · {utcStamp(row.updatedAt)}</div>

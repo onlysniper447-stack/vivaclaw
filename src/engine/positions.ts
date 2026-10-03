@@ -8,7 +8,9 @@ import { earnedFromApr } from "@/lib/accrual";
 import { logInfo, logWarn } from "@/engine/logger";
 import { singleton } from "@/engine/singleton";
 import { yieldSensor } from "@/engine/YieldSensor";
+import { getStoredOpportunity } from "@/engine/opportunity-store";
 import { venueFamily } from "@/lib/venues";
+import { aprFromApy, toBps } from "@/engine/rates";
 import type { VenueFamily, VenueId } from "@/types/vivaclaw";
 
 export { dailyEarn, earnedFromApr, YEAR_MS } from "@/lib/accrual";
@@ -108,25 +110,36 @@ export function enterPool(poolId: string): PositionActionResult {
   const open = live.positions.find((row) => row.poolId === id && row.status === "open");
   if (open) return fail("Already in this pool. Claim or withdraw on Execution.");
 
+  const hl = getStoredOpportunity(id);
   const pool = yieldSensor.getPools().find((row) => row.id === id);
-  if (!pool) return fail("Check yields first, then ENTER a printed pool.");
-  if (pool.rateQuality !== "ok" || pool.aprBps <= 0 || pool.apyBps <= 0) {
-    return fail("This pool does not have a usable APR or APY.");
+  const apy = hl
+    ? hl.apyTotal ?? hl.apyBase
+    : pool && pool.rateQuality === "ok"
+      ? pool.apy
+      : null;
+  if (apy === null || !(apy > 0)) {
+    return fail(pool || hl ? "This pool does not have a usable APY." : "Check yields first, then ENTER a printed pool.");
   }
+  const apyBps = hl ? toBps(apy) : pool!.apyBps;
+  const aprBps = hl ? (hl.apr !== null ? toBps(hl.apr) : toBps(aprFromApy(apy))) : pool!.aprBps;
+  const symbol = hl ? hl.assets.map((a) => a.symbol).join("/") : pool!.symbol;
+  const mint = hl ? (hl.assets[0]?.id ?? hl.id) : pool!.mint;
+  const venue = (hl ? hl.venue : pool!.venue) as VenueId;
+  const venueAddress = hl ? (hl.assets[0]?.id ?? hl.id) : pool!.venueAddress;
 
-  const size = defaultPrincipal(pool.symbol, pool.mint);
+  const size = defaultPrincipal(symbol, mint);
   const now = Date.now();
   const position: StoredPosition = {
-    id: `pos:${pool.id}:${now}`,
-    poolId: pool.id,
-    venue: pool.venue,
-    family: venueFamily(pool.venue),
-    symbol: pool.symbol,
-    mint: pool.mint,
+    id: `pos:${id}:${now}`,
+    poolId: id,
+    venue,
+    family: venueFamily(venue),
+    symbol,
+    mint,
     unit: size.unit,
-    venueAddress: pool.venueAddress,
-    aprBps: pool.aprBps,
-    apyBps: pool.apyBps,
+    venueAddress,
+    aprBps,
+    apyBps,
     principal: size.amount,
     claimed: 0,
     enteredAt: now,

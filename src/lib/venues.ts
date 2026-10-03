@@ -14,11 +14,35 @@ export function venueLabel(venue: VenueId): string {
       return "Raydium";
     case "orca":
       return "Orca";
+    case "hypercore":
+      return "HyperCore";
+    case "hyperlend":
+      return "HyperLend";
+    case "felix":
+      return "Felix";
+    case "morpho":
+      return "Morpho";
+    case "hyperswap":
+      return "HyperSwap";
+    case "kittenswap":
+      return "Kittenswap";
+    case "projectx":
+      return "Project X";
   }
 }
 
 export function venueFamily(venue: VenueId): VenueFamily {
-  return venue === "kamino" || venue === "meteora" ? "lend" : "lp";
+  if (
+    venue === "kamino" ||
+    venue === "meteora" ||
+    venue === "hypercore" ||
+    venue === "hyperlend" ||
+    venue === "felix" ||
+    venue === "morpho"
+  ) {
+    return "lend";
+  }
+  return "lp";
 }
 
 export function venueSource(venue: VenueId): string {
@@ -35,5 +59,19 @@ export function venueSource(venue: VenueId): string {
       return "Raydium";
     case "orca":
       return "Orca Whirlpool";
+    case "hypercore":
+      return "HyperCore native lend";
+    case "hyperlend":
+      return "HyperLend pooled market";
+    case "felix":
+      return "Felix Morpho vault";
+    case "morpho":
+      return "Morpho Blue vault";
+    case "hyperswap":
+      return "HyperSwap";
+    case "kittenswap":
+      return "Kittenswap Algebra";
+    case "projectx":
+      return "Project X";
   }
 }

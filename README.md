@@ -1,6 +1,10 @@
 # VIVACLAW
 
-Autonomous yield-arbitrage agent on Solana. The workspace is a Next.js 16 App Router app (TypeScript, Tailwind CSS v4, ESM) with a server-side execution engine.
+Yield and liquidity-pool intelligence for Hyperliquid, for people and AI agents. The workspace is a Next.js 16 App Router app (TypeScript, Tailwind CSS v4, ESM) with `packages/vivaclaw-core` adapters.
+
+Indications are informational, not financial advice. The app is non-custodial: it never holds funds or keys.
+
+The Solana console is snapshotted at git tag `solana-v1` and copied under `archive/solana-v1/`.
 
 | Layer | Stack |
 | --- | --- |

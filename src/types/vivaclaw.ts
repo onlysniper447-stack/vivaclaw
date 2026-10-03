@@ -7,7 +7,7 @@ export type AgentStatus = "IDLE" | "SCANNING" | "EXECUTING" | "CIRCUIT_HOLD";
 
 export type EnginePhase = "idle" | "scanning" | "error";
 
-export type SourceName = "kamino" | "meteora" | "lp" | "jupiter" | "pyth";
+export type SourceName = "hypercore" | "llama" | "morpho" | "dexscreener" | "hyperlend";
 
 export interface SourceProgress {
   state: "idle" | "running" | "ok" | "error";
@@ -21,7 +21,20 @@ export interface EngineView {
   sources: Record<SourceName, SourceProgress>;
 }
 
-export type VenueId = "kamino" | "meteora" | "meteora-dlmm" | "meteora-damm" | "raydium" | "orca";
+export type VenueId =
+  | "kamino"
+  | "meteora"
+  | "meteora-dlmm"
+  | "meteora-damm"
+  | "raydium"
+  | "orca"
+  | "hypercore"
+  | "hyperlend"
+  | "felix"
+  | "morpho"
+  | "hyperswap"
+  | "kittenswap"
+  | "projectx";
 
 export type VenueFamily = "lend" | "lp";
 

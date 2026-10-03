@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "VivaClaw",
   description:
-    "VivaClaw compares Solana lending rates on Meteora and Kamino. Read-only console. It does not sign or send transactions.",
+    "VivaClaw is yield and liquidity-pool intelligence for Hyperliquid, for people and AI agents. Indications are informational, not financial advice. Non-custodial: the app never holds funds or keys.",
 };
 
 export default function RootLayout({

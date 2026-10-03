@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { DashboardPayload } from "@/types/dashboard";
 
 export async function loadDashboard(): Promise<DashboardPayload> {
-  const res = await fetch("/api/dashboard", { signal: AbortSignal.timeout(12_000) });
+  const res = await fetch("/api/dashboard", { signal: AbortSignal.timeout(45_000) });
   const body = (await res.json().catch(() => ({}))) as { error?: string };
   if (!res.ok) {
     throw new Error(body.error ?? "The dashboard did not respond.");
