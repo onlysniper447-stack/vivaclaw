@@ -10,10 +10,7 @@ import { getStoredOpportunity } from "@/engine/opportunity-store";
 import { venueFamily } from "@/lib/venues";
 import { aprFromApy, toBps } from "@/engine/rates";
 import type { VenueFamily, VenueId } from "@/types/hettnet";
-
-const NATIVE_SOL_MINT = "So11111111111111111111111111111111111111112";
-const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-const USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB";
+import { CIRCLE_USDC, HYPE_SYSTEM_ADDRESS, USDT0, WHYPE_ADDRESS } from "hettnet-core";
 
 export { dailyEarn, earnedFromApr, YEAR_MS } from "@/lib/accrual";
 const MAX_ACTIONS = 80;
@@ -66,18 +63,26 @@ const live = singleton("positions.enterClaim", () => ({
   actions: [] as PositionAction[],
 }));
 
+function sameAddress(left: string, right: string): boolean {
+  return left.toLowerCase() === right.toLowerCase();
+}
+
 export function defaultPrincipal(symbol: string, mint: string): { amount: number; unit: string } {
-  if (mint === NATIVE_SOL_MINT || symbol.startsWith("SOL")) {
-    return { amount: 1, unit: "SOL" };
+  const base = symbol.split("/")[0] ?? symbol;
+  if (
+    base === "HYPE" ||
+    sameAddress(mint, WHYPE_ADDRESS) ||
+    sameAddress(mint, HYPE_SYSTEM_ADDRESS)
+  ) {
+    return { amount: 0.01, unit: "HYPE" };
   }
-  if (mint === USDC_MINT || symbol.startsWith("USDC")) {
+  if (base.startsWith("USDC") || sameAddress(mint, CIRCLE_USDC)) {
     return { amount: 1_000, unit: "USDC" };
   }
-  if (mint === USDT_MINT || symbol.startsWith("USDT")) {
-    return { amount: 1_000, unit: "USDT" };
+  if (base.startsWith("USDT") || sameAddress(mint, USDT0)) {
+    return { amount: 1_000, unit: "USDT0" };
   }
-  const unit = symbol.split("/")[0] ?? "USDC";
-  return { amount: 1_000, unit };
+  return { amount: 1_000, unit: base || "USDC" };
 }
 
 export function earnedAmount(position: StoredPosition, now = Date.now()): number {

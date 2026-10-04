@@ -1,13 +1,7 @@
 import { singleton } from "@/engine/singleton";
-import { getServerEnv } from "@/lib/env";
-import { tryLoadAgentPubkey } from "@/lib/solana/wallet";
-import { yieldSensor } from "@/engine/YieldSensor";
-import { riskEngine } from "@/engine/RiskEngine";
-import { executionRouter } from "@/engine/ExecutionRouter";
-import { probeJupiter } from "@/engine/probes";
 import { getAgentLogs, logInfo, logWarn } from "@/engine/logger";
-import type { AgentSnapshot, ExecutionResult, OpportunityKind, ProtocolId, YieldOpportunity } from "@/types";
-import type { AgentStatus, EngineView, SourceName, SourceProgress, VenueId, YieldDelta, YieldPool } from "@/types/hettnet";
+import type { AgentSnapshot, ExecutionResult, ProtocolId, YieldOpportunity } from "@/types";
+import type { AgentStatus, EngineView, SourceName, SourceProgress, VenueId } from "@/types/hettnet";
 import { venueLabel } from "@/lib/venues";
 
 function idleSource(): SourceProgress {
@@ -34,8 +28,8 @@ const live = singleton("agent.aprApy", () => {
   const initialSnapshot: AgentSnapshot = {
     mode: "idle",
     dryRun: true,
-    cluster: "mainnet-beta",
-    pubkey: null,
+    cluster: "hyperliquid",
+    address: null,
     lastScanAt: null,
     opportunities: [],
     lastExecution: null,
@@ -51,78 +45,8 @@ const live = singleton("agent.aprApy", () => {
   };
 });
 
-function feeNet(grossBps: number, feeBps: number): number {
-  return grossBps - feeBps;
-}
-
 function opportunityProtocol(venue: VenueId): ProtocolId {
-  switch (venue) {
-    case "kamino":
-      return "kamino";
-    case "meteora":
-    case "meteora-dlmm":
-    case "meteora-damm":
-      return "meteora";
-    case "raydium":
-      return "raydium";
-    case "orca":
-      return "orca";
-    case "hypercore":
-      return "hypercore";
-    case "hyperlend":
-      return "hyperlend";
-    case "felix":
-      return "felix";
-    case "morpho":
-      return "morpho";
-    case "hyperswap":
-      return "hyperswap";
-    case "kittenswap":
-      return "kittenswap";
-    case "projectx":
-      return "projectx";
-  }
-}
-
-function opportunityKind(venue: VenueId): OpportunityKind {
-  if (venue === "kamino") return "lend-supply";
-  if (venue === "meteora") return "vault-yield";
-  return "lp-fee";
-}
-
-function opportunityFromPool(pool: YieldPool, feeBps: number): YieldOpportunity {
-  const gross = pool.rateQuality === "ok" ? pool.apyBps : null;
-  return {
-    id: pool.id,
-    protocol: opportunityProtocol(pool.venue),
-    kind: opportunityKind(pool.venue),
-    asset: { symbol: pool.symbol, mint: pool.mint, decimals: pool.decimals },
-    grossApyBps: gross,
-    netApyBps: gross === null ? null : feeNet(gross, feeBps),
-    tvlUsd: pool.tvlUsd,
-    liquidityUsd: Number(pool.liquidityAtomic) / 10 ** pool.decimals,
-    estimatedGasSol: 0.002,
-    priceImpactBps: null,
-    protocolFeeBps: feeBps,
-    venueLabel: venueLabel(pool.venue),
-    updatedAt: pool.updatedAt,
-  };
-}
-
-function toOpportunities(deltas: YieldDelta[], lpPools: YieldPool[]): YieldOpportunity[] {
-  const feeBps = 0;
-  const rows: YieldOpportunity[] = [];
-  for (const delta of deltas) {
-    for (const pool of [delta.kamino, delta.meteora]) {
-      if (!pool) continue;
-      rows.push(opportunityFromPool(pool, feeBps));
-    }
-  }
-  for (const pool of lpPools) {
-    rows.push(opportunityFromPool(pool, feeBps));
-  }
-  rows.sort((a, b) => (b.grossApyBps ?? -1) - (a.grossApyBps ?? -1));
-  return rows;
+  return venue;
 }
 
 export function getAgentStatus(): AgentStatus {
@@ -134,12 +58,11 @@ export function getEngineView(): EngineView {
 }
 
 export function getAgentSnapshot(): AgentSnapshot {
-  const env = getServerEnv();
   return {
     ...live.snapshot,
     dryRun: true,
-    cluster: env.AGENT_CLUSTER,
-    pubkey: tryLoadAgentPubkey(),
+    cluster: "hyperliquid",
+    address: null,
     engine: live.engineState,
   };
 }
@@ -208,12 +131,11 @@ async function runScan(): Promise<AgentSnapshot> {
         netApyBps: apyBps,
         tvlUsd: opp.tvl ?? 0,
         liquidityUsd: opp.tvl ?? 0,
-        estimatedGasSol: 0,
         priceImpactBps: null,
         protocolFeeBps: 0,
         venueLabel: venueLabel(opp.venue),
         updatedAt: opp.fetchedAt,
-      };
+      } satisfies YieldOpportunity;
     });
     live.snapshot.lastScanAt = result.fetchedAt;
     live.snapshot.cluster = "hyperliquid";

@@ -1,5 +1,14 @@
 import { isAddress, type Address } from "viem";
 
+export const WALLET_CAPABILITIES = {
+  connect: true,
+  disconnect: true,
+  readAddress: true,
+  signTransaction: false,
+  sendTransaction: false,
+  signMessage: false,
+} as const;
+
 export function parseEvmAddress(raw: string | null | undefined): Address | null {
   if (!raw) return null;
   const trimmed = raw.trim();

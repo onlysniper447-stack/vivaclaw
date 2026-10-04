@@ -162,7 +162,7 @@ export function ExecutionBoard({ data }: { data: DashboardPayload }) {
                     <td className="py-4 pr-4 font-sans text-[16px]">
                       {quote?.symbol ? cleanText(quote.symbol) : "—"}
                       <span className="mt-1 block font-sans text-[14px] font-light text-[#9CA3AF]">
-                        {quote?.fromVenue && quote.toVenue ? `${quote.fromVenue} → ${quote.toVenue}` : "Jupiter quote"}
+                        {quote?.fromVenue && quote.toVenue ? `${quote.fromVenue} → ${quote.toVenue}` : "Hyperliquid quote"}
                       </span>
                     </td>
                     <td className="num py-4 pr-4 font-mono text-[14px]">

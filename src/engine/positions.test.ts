@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { NATIVE_SOL_MINT, USDC_MINT } from "../lib/constants";
+import { CIRCLE_USDC, WHYPE_ADDRESS } from "hettnet-core";
 import { dailyEarn, earnedFromApr, YEAR_MS } from "../lib/accrual";
 import { claimPool, defaultPrincipal, earnedAmount, enterPool, withdrawPool, type StoredPosition } from "./positions";
 
@@ -8,11 +8,11 @@ function openPosition(partial: Partial<StoredPosition> = {}): StoredPosition {
   const now = 1_700_000_000_000;
   return {
     id: "pos:test",
-    poolId: "kamino:usdc",
-    venue: "kamino",
+    poolId: "hypercore:usdc",
+    venue: "hypercore",
     family: "lend",
     symbol: "USDC",
-    mint: USDC_MINT,
+    mint: CIRCLE_USDC,
     unit: "USDC",
     venueAddress: "reserve",
     aprBps: 1_000,
@@ -29,10 +29,10 @@ function openPosition(partial: Partial<StoredPosition> = {}): StoredPosition {
 }
 
 describe("simulated pool size", () => {
-  it("uses 1 SOL and 1,000 stables", () => {
-    assert.deepEqual(defaultPrincipal("SOL", NATIVE_SOL_MINT), { amount: 1, unit: "SOL" });
-    assert.deepEqual(defaultPrincipal("SOL/USDC", NATIVE_SOL_MINT), { amount: 1, unit: "SOL" });
-    assert.deepEqual(defaultPrincipal("USDC", USDC_MINT), { amount: 1_000, unit: "USDC" });
+  it("uses 0.01 HYPE and 1,000 stables", () => {
+    assert.deepEqual(defaultPrincipal("HYPE", WHYPE_ADDRESS), { amount: 0.01, unit: "HYPE" });
+    assert.deepEqual(defaultPrincipal("HYPE/USDC", WHYPE_ADDRESS), { amount: 0.01, unit: "HYPE" });
+    assert.deepEqual(defaultPrincipal("USDC", CIRCLE_USDC), { amount: 1_000, unit: "USDC" });
   });
 });
 

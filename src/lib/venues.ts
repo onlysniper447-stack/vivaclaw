@@ -2,18 +2,6 @@ import type { VenueFamily, VenueId } from "@/types/hettnet";
 
 export function venueLabel(venue: VenueId): string {
   switch (venue) {
-    case "kamino":
-      return "Kamino";
-    case "meteora":
-      return "Meteora vault";
-    case "meteora-dlmm":
-      return "Meteora DLMM";
-    case "meteora-damm":
-      return "Meteora DAMM";
-    case "raydium":
-      return "Raydium";
-    case "orca":
-      return "Orca";
     case "hypercore":
       return "HyperCore";
     case "hyperlend":
@@ -32,33 +20,14 @@ export function venueLabel(venue: VenueId): string {
 }
 
 export function venueFamily(venue: VenueId): VenueFamily {
-  if (
-    venue === "kamino" ||
-    venue === "meteora" ||
-    venue === "hypercore" ||
-    venue === "hyperlend" ||
-    venue === "felix" ||
-    venue === "morpho"
-  ) {
-    return "lend";
+  if (venue === "hyperswap" || venue === "kittenswap" || venue === "projectx") {
+    return "lp";
   }
-  return "lp";
+  return "lend";
 }
 
 export function venueSource(venue: VenueId): string {
   switch (venue) {
-    case "kamino":
-      return "Kamino Lend main market";
-    case "meteora":
-      return "Meteora Dynamic Vault";
-    case "meteora-dlmm":
-      return "Meteora DLMM";
-    case "meteora-damm":
-      return "Meteora DAMM";
-    case "raydium":
-      return "Raydium";
-    case "orca":
-      return "Orca Whirlpool";
     case "hypercore":
       return "HyperCore native lend";
     case "hyperlend":

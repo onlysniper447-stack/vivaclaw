@@ -6,7 +6,7 @@ import { Bar, EmptyState, SortButton, Stat, StatusDot } from "@/components/ui/ki
 import { cleanText, formatPercentBps, formatSignedBps, freshnessLabel, indicationTone, riskVerdict, shortenMint, statusText, utcStamp } from "@/lib/present";
 import type { DashboardPayload, YieldMonitorRow } from "@/types/dashboard";
 
-type Key = "asset" | "meteora" | "kamino" | "gap" | "status";
+type Key = "asset" | "hyperevm" | "hypercore" | "gap" | "status";
 
 const PAGE = 25;
 
@@ -123,8 +123,8 @@ export function Overview({ data }: { data: DashboardPayload }) {
               <thead>
                 <tr className="border-b border-[#2B313B]">
                   <th className="py-3 pr-4" aria-sort={sort.key === "asset" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="Asset" active={sort.key === "asset"} direction={sort.dir} onClick={() => toggle("asset")} /></th>
-                  <th className="py-3 pr-4" aria-sort={sort.key === "meteora" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="HyperEVM" active={sort.key === "meteora"} direction={sort.dir} onClick={() => toggle("meteora")} /></th>
-                  <th className="py-3 pr-4" aria-sort={sort.key === "kamino" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="HyperCore" active={sort.key === "kamino"} direction={sort.dir} onClick={() => toggle("kamino")} /></th>
+                  <th className="py-3 pr-4" aria-sort={sort.key === "hyperevm" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="HyperEVM" active={sort.key === "hyperevm"} direction={sort.dir} onClick={() => toggle("hyperevm")} /></th>
+                  <th className="py-3 pr-4" aria-sort={sort.key === "hypercore" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="HyperCore" active={sort.key === "hypercore"} direction={sort.dir} onClick={() => toggle("hypercore")} /></th>
                   <th className="py-3 pr-4" aria-sort={sort.key === "gap" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="Gap" active={sort.key === "gap"} direction={sort.dir} onClick={() => toggle("gap")} /></th>
                   <th className="py-3" aria-sort={sort.key === "status" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}><SortButton label="Status" active={sort.key === "status"} direction={sort.dir} onClick={() => toggle("status")} /></th>
                 </tr>
@@ -146,8 +146,8 @@ export function Overview({ data }: { data: DashboardPayload }) {
                       </td>
                       {expanded ? null : (
                         <>
-                          <td className="num py-4 pr-4 font-mono text-[14px]">{rateCell(row.meteoraApyBps, row.status)}</td>
-                          <td className="num py-4 pr-4 font-mono text-[14px]">{rateCell(row.kaminoApyBps, row.status)}</td>
+                          <td className="num py-4 pr-4 font-mono text-[14px]">{rateCell(row.hyperevmApyBps, row.status)}</td>
+                          <td className="num py-4 pr-4 font-mono text-[14px]">{rateCell(row.hypercoreApyBps, row.status)}</td>
                           <td className="py-4 pr-4">
                             <span className="num font-mono text-[14px]">{row.deltaApyBps === null ? "Not comparable" : formatSignedBps(row.deltaApyBps)}</span>
                             {row.status === "above" && row.deltaApyBps !== null ? <Bar value={row.deltaApyBps} max={maxGap} /> : null}
@@ -212,7 +212,7 @@ export function Overview({ data }: { data: DashboardPayload }) {
           <h2 className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">Connections</h2>
           <ul className="mt-4 space-y-4">
             <Connection name={data.probes.rpc.name} probe={data.probes.rpc} />
-            <Connection name={data.probes.jupiter.name} probe={data.probes.jupiter} />
+            <Connection name={data.probes.hyperevm.name} probe={data.probes.hyperevm} />
             <Connection name={data.probes.engine.name} probe={data.probes.engine} />
           </ul>
         </Card>
@@ -254,8 +254,8 @@ function Expanded({ row, onClose }: { row: YieldMonitorRow; onClose: () => void 
         </button>
       </div>
       <dl className="mt-4 grid gap-2 font-mono text-[13px] text-[#9CA3AF]">
-        <div>HyperEVM raw: {row.meteoraApyBps === null ? "no pool" : `${row.meteoraApyBps} bps`}</div>
-        <div>HyperCore raw: {row.kaminoApyBps === null ? "no pool" : `${row.kaminoApyBps} bps`}</div>
+        <div>HyperEVM raw: {row.hyperevmApyBps === null ? "no pool" : `${row.hyperevmApyBps} bps`}</div>
+        <div>HyperCore raw: {row.hypercoreApyBps === null ? "no pool" : `${row.hypercoreApyBps} bps`}</div>
         <div>Gap raw: {row.deltaApyBps === null ? "not comparable" : `${row.deltaApyBps} bps`}</div>
         <div>Source: {cleanText(row.source)}</div>
         <div title={utcStamp(row.updatedAt)}>Read: {freshnessLabel(row.updatedAt)} · {utcStamp(row.updatedAt)}</div>
@@ -277,7 +277,7 @@ function rateCell(bps: number | null, status: YieldMonitorRow["status"]): ReactN
 function sortValue(row: YieldMonitorRow, key: Key): string | number | null {
   if (key === "asset") return row.symbol;
   if (key === "status") return row.status;
-  if (key === "meteora") return row.meteoraApyBps;
-  if (key === "kamino") return row.kaminoApyBps;
+  if (key === "hyperevm") return row.hyperevmApyBps;
+  if (key === "hypercore") return row.hypercoreApyBps;
   return row.deltaApyBps === null ? null : Math.abs(row.deltaApyBps);
 }

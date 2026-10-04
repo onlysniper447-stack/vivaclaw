@@ -1,4 +1,4 @@
-/** Display helper only. Never constructs a Solana PublicKey. */
+/** Display helper only. Never constructs a signer. */
 
 export function shortenAddress(address: string | null | undefined): string {
   if (!address) return "—";

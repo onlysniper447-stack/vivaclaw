@@ -12,7 +12,7 @@ describe("present", () => {
 
   it("prints an amount with its unit", () => {
     assert.match(formatAmount(1000, "USDC"), /1,000(\.00)? USDC/);
-    assert.equal(formatAmount(null, "SOL"), "—");
+    assert.equal(formatAmount(null, "HYPE"), "—");
   });
 
   it("neutralizes spreadsheet formulas", () => {

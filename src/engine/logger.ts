@@ -4,12 +4,6 @@ import { singleton } from "@/engine/singleton";
 const MAX_LOGS = 500;
 const logs = singleton("logs", () => [] as AgentLog[]);
 
-export function solscanTxUrl(signature: string, cluster: string): string {
-  const base = "https://solscan.io/tx/" + signature;
-  if (cluster === "mainnet-beta") return base;
-  return `${base}?cluster=${cluster}`;
-}
-
 export function pushLog(entry: Omit<AgentLog, "ts"> & { ts?: number }): AgentLog {
   const log: AgentLog = {
     ts: entry.ts ?? Date.now(),
@@ -17,7 +11,6 @@ export function pushLog(entry: Omit<AgentLog, "ts"> & { ts?: number }): AgentLog
     status: entry.status,
     message: entry.message,
     signature: entry.signature,
-    solscanUrl: entry.solscanUrl,
     data: entry.data,
   };
   logs.push(log);
@@ -28,7 +21,7 @@ export function pushLog(entry: Omit<AgentLog, "ts"> & { ts?: number }): AgentLog
   const line = `[hettnet:${log.status}] ${log.message}`;
   if (log.level === "error") console.error(line, log.data ?? "");
   else if (log.level === "warn") console.warn(line, log.data ?? "");
-  else console.info(line, log.solscanUrl ?? "");
+  else console.info(line, log.data ?? "");
 
   return log;
 }

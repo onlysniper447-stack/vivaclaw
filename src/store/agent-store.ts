@@ -17,8 +17,8 @@ interface AgentStore {
 const emptySnapshot = (): AgentSnapshot => ({
   mode: "idle",
   dryRun: true,
-  cluster: "mainnet-beta",
-  pubkey: null,
+  cluster: "hyperliquid",
+  address: null,
   lastScanAt: null,
   opportunities: [],
   lastExecution: null,

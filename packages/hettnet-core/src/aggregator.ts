@@ -44,8 +44,7 @@ async function loadAll(): Promise<DiscoverResult> {
 function skipVerify(): boolean {
   return (
     process.env.NEXT_PHASE === "phase-production-build" ||
-    process.env.HETTNET_SKIP_VERIFY === "1" ||
-    process.env.VIVACLAW_SKIP_VERIFY === "1"
+    process.env.HETTNET_SKIP_VERIFY === "1"
   );
 }
 

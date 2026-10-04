@@ -1,5 +1,5 @@
 /**
- * Classify a Meteora − Kamino gap.
+ * Classify a HyperEVM − HyperCore gap.
  * Rates are integer basis points. 100 bps = 1%. Null means the venue had no rate.
  * A gap is returned only when both rates are finite and not exactly 0.
  */
@@ -8,7 +8,7 @@ export type GapStatus = "above" | "below" | "no-pool" | "suspect" | "error";
 
 export interface Classification {
   status: GapStatus;
-  /** Signed gap in bps: Meteora − Kamino. Null when the rates cannot be compared. */
+  /** Signed gap in bps: HyperEVM − HyperCore. Null when the rates cannot be compared. */
   gap: number | null;
   reason?: string;
   unusual: boolean;
@@ -30,19 +30,19 @@ function suspectZero(value: number): boolean {
 }
 
 export function classifyAsset(
-  meteoraApy: number | null,
-  kaminoApy: number | null,
+  hyperevmApy: number | null,
+  hypercoreApy: number | null,
   trigger: number,
   options?: { ceilingBps?: number; ratio?: number },
 ): Classification {
   const ceiling = options?.ceilingBps ?? DEFAULT_APY_CEILING_BPS;
   const ratio = options?.ratio ?? DEFAULT_APY_RATIO;
-  const meteora = meteoraApy;
-  const kamino = kaminoApy;
+  const hyperevm = hyperevmApy;
+  const hypercore = hypercoreApy;
 
   if (
-    (meteora !== null && !Number.isFinite(meteora)) ||
-    (kamino !== null && !Number.isFinite(kamino))
+    (hyperevm !== null && !Number.isFinite(hyperevm)) ||
+    (hypercore !== null && !Number.isFinite(hypercore))
   ) {
     return {
       status: "error",
@@ -53,8 +53,8 @@ export function classifyAsset(
   }
 
   if (
-    (meteora !== null && suspectZero(meteora)) ||
-    (kamino !== null && suspectZero(kamino))
+    (hyperevm !== null && suspectZero(hyperevm)) ||
+    (hypercore !== null && suspectZero(hypercore))
   ) {
     return {
       status: "suspect",
@@ -64,7 +64,7 @@ export function classifyAsset(
     };
   }
 
-  if (missing(meteora) && missing(kamino)) {
+  if (missing(hyperevm) && missing(hypercore)) {
     return {
       status: "no-pool",
       gap: null,
@@ -73,8 +73,8 @@ export function classifyAsset(
     };
   }
 
-  if (missing(meteora) || missing(kamino)) {
-    const missingVenue = missing(meteora) ? "Meteora" : "Kamino";
+  if (missing(hyperevm) || missing(hypercore)) {
+    const missingVenue = missing(hyperevm) ? "HyperEVM" : "HyperCore";
     return {
       status: "no-pool",
       gap: null,
@@ -83,15 +83,15 @@ export function classifyAsset(
     };
   }
 
-  const gap = meteora - kamino;
+  const gap = hyperevm - hypercore;
   const status: GapStatus = Math.abs(gap) >= trigger ? "above" : "below";
   const lead =
-    gap > 0 ? "Meteora leads." : gap < 0 ? "Kamino leads." : "Rates are equal.";
+    gap > 0 ? "HyperEVM leads." : gap < 0 ? "HyperCore leads." : "Rates are equal.";
 
-  const larger = Math.max(meteora, kamino);
-  const smaller = Math.min(Math.abs(meteora), Math.abs(kamino));
+  const larger = Math.max(hyperevm, hypercore);
+  const smaller = Math.min(Math.abs(hyperevm), Math.abs(hypercore));
   const stretched = smaller > 0 && larger > smaller * ratio;
-  const overCeiling = meteora > ceiling || kamino > ceiling;
+  const overCeiling = hyperevm > ceiling || hypercore > ceiling;
   const unusual = stretched || overCeiling;
 
   return {

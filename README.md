@@ -4,8 +4,6 @@ Yield and liquidity-pool intelligence for Hyperliquid, for people and AI agents.
 
 Indications are informational, not financial advice. The app is non-custodial: it never holds funds or keys.
 
-The previous Solana console is snapshotted at git tag `solana-v1` and copied under `archive/solana-v1/`.
-
 | Layer | Stack |
 | --- | --- |
 | App | Next.js 16 · React 19 · App Router · `src/` |
@@ -21,12 +19,12 @@ src/
   app/                 App Router pages + API routes
   components/          console, home, wallet
   engine/              discovery, signals, entry plans, WS feed
-  lib/                 env, chain helpers
+  lib/                 public env, chain helpers
   store/               Zustand client store
   types/               shared interfaces
 ```
 
-Engine code is server-only by convention. Client components talk to `/api/*` — they never import `@/lib/env`.
+Engine code is server-only by convention. Client components talk to `/api/*`.
 
 ## Setup
 

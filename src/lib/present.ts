@@ -84,7 +84,7 @@ export function shortenMint(mint: string): string {
   return `${clean.slice(0, 4)}…${clean.slice(-4)}`;
 }
 
-/** Age of a Pyth print in seconds, measured at the dashboard reading. */
+/** Age of an oracle print in seconds, measured at the dashboard reading. */
 export function oracleAgeSeconds(generatedAt: number, publishTimeSec: number): number {
   return Math.max(0, Math.round((generatedAt - publishTimeSec * 1000) / 1000));
 }
@@ -102,7 +102,7 @@ export function pegReading(
 /**
  * One risk word for Overview and the Risk tab.
  * Hyperliquid alerts (kink, pause, outlier) take priority when present.
- * A Pyth print that has aged past its threshold since the check is Caution.
+ * An oracle print that has aged past its threshold since the check is Caution.
  */
 export function riskVerdict(
   data: Pick<DashboardPayload, "generatedAt" | "risk"> & Partial<Pick<DashboardPayload, "alerts">>,
@@ -151,7 +151,7 @@ export function riskVerdict(
     return {
       word: "Caution",
       reason: aged
-        ? `A Pyth print is older than ${risk.thresholds.oracleMaxAgeSec}s as of this reading.`
+        ? `An oracle print is older than ${risk.thresholds.oracleMaxAgeSec}s as of this reading.`
         : risk.reasons[0] ?? "A peg, volatility, or oracle print is outside its band.",
     };
   }

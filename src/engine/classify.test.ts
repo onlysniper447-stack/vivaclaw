@@ -5,7 +5,7 @@ import { classifyAsset, gapStatusLabel } from "./classify";
 const TRIGGER = 350;
 
 describe("classifyAsset", () => {
-  it("does not invent a gap when Meteora is missing", () => {
+  it("does not invent a gap when HyperEVM is missing", () => {
     const result = classifyAsset(null, 869, TRIGGER);
     assert.equal(result.status, "no-pool");
     assert.equal(result.gap, null);
@@ -30,7 +30,7 @@ describe("classifyAsset", () => {
     const result = classifyAsset(100, 900, TRIGGER);
     assert.equal(result.status, "above");
     assert.equal(result.gap, -800);
-    assert.match(result.reason ?? "", /Kamino leads/);
+    assert.match(result.reason ?? "", /HyperCore leads/);
   });
 
   it("includes a gap of exactly 3.5%", () => {

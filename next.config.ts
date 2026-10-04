@@ -32,23 +32,7 @@ const nextConfig: NextConfig = {
   },
   outputFileTracingRoot: projectRoot,
   transpilePackages: ["hettnet-core"],
-  serverExternalPackages: [
-    "@solana/web3.js",
-    "@solana/kit",
-    "@solana/spl-token",
-    "@kamino-finance/klend-sdk",
-    "@solana-program/compute-budget",
-    "@solana-program/memo",
-    "@meteora-ag/vault-sdk",
-    "@coral-xyz/anchor",
-    "@pythnetwork/price-service-client",
-    "@pythnetwork/hermes-client",
-    "@jup-ag/api",
-    "bn.js",
-    "ws",
-  ],
-  // Next.js 16 builds with Turbopack unless `--webpack` is passed.
-  // Solana SDKs still need these browser fallbacks, so `npm run build` stays on Webpack.
+  serverExternalPackages: ["ws"],
   webpack: (config, { isServer }) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,

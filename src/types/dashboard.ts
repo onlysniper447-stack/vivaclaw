@@ -23,8 +23,8 @@ export type GapClassification = Classification;
 export interface YieldMonitorRow {
   symbol: string;
   mint: string;
-  kaminoApyBps: number | null;
-  meteoraApyBps: number | null;
+  hypercoreApyBps: number | null;
+  hyperevmApyBps: number | null;
   deltaApyBps: number | null;
   meetsTrigger: boolean;
   status: Classification["status"];
@@ -43,9 +43,7 @@ export interface VenueYieldRow {
   family: VenueFamily;
   symbol: string;
   mint: string;
-  /** Simple annualized (daily × 365). */
   aprBps: number | null;
-  /** Daily compound of the same rate. */
   apyBps: number | null;
   quality: "ok" | "suspect" | "missing";
   indication: Indication;
@@ -53,12 +51,9 @@ export interface VenueYieldRow {
   alerts: string[];
   unusual: boolean;
   unusualReason: string | null;
-  /** Venue print. Not a quoted route. */
   grossApyBps: number | null;
-  /** Gross minus the configured fee assumption. Null until both exist. */
   netApyBps: number | null;
   feeBps: number;
-  /** Null until a Jupiter route is quoted for this row. */
   priceImpactBps: number | null;
   quoted: boolean;
   source: string;
@@ -71,7 +66,6 @@ export interface LastQuoteView {
   outputMint: string;
   inAmount: string;
   outAmount: string;
-  jitoTipLamports: number;
   dryRun: boolean;
   at: number | null;
   symbol: string | null;
@@ -81,7 +75,6 @@ export interface LastQuoteView {
 }
 
 export interface LastTxView {
-  /** Never a fabricated signature. Dry-run quotes are not on-chain. */
   status: "none" | "quoted-dry-run" | "error";
   error?: string;
   at: number | null;
@@ -131,11 +124,11 @@ export interface DashboardPayload {
   haltReason: string | null;
   lastScanAt: number | null;
   signerLoaded: boolean;
-  pubkeyShort: string | null;
+  addressShort: string | null;
   banners: BannerKind[];
   probes: {
     rpc: ServiceProbe;
-    jupiter: ServiceProbe;
+    hyperevm: ServiceProbe;
     engine: ServiceProbe;
   };
   yields: {
