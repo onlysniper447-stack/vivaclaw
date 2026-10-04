@@ -10,11 +10,8 @@ export async function GET() {
     const payload = await getDashboardPayload();
     return NextResponse.json(payload);
   } catch (error) {
-    return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "dashboard unavailable",
-      },
-      { status: 500 },
-    );
+    const message = error instanceof Error ? error.message : "dashboard unavailable";
+    console.error("[hettnet:dashboard]", message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

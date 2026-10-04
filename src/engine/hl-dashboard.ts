@@ -9,7 +9,6 @@ import {
 import { classifyAsset } from "@/engine/classify";
 import { earnedAmount, listActions, listPositions } from "@/engine/positions";
 import { dailyEarn } from "@/lib/accrual";
-import { getServerEnv } from "@/lib/env";
 import { venueFamily } from "@/lib/venues";
 import { setOpportunitySnapshot } from "@/engine/opportunity-store";
 import type {
@@ -212,18 +211,29 @@ async function probeHyperEvm(): Promise<ServiceProbe> {
   }
 }
 
+function dashboardTuning() {
+  const triggerBps = Number(process.env.YIELD_DELTA_TRIGGER_BPS);
+  const ceilingBps = Number(process.env.APY_SANITY_CEILING_BPS);
+  const scanIntervalMs = Number(process.env.SCAN_INTERVAL_MS);
+  return {
+    triggerBps: Number.isFinite(triggerBps) && triggerBps > 0 ? triggerBps : 350,
+    ceilingBps: Number.isFinite(ceilingBps) && ceilingBps > 0 ? ceilingBps : 3_000,
+    scanIntervalMs: Number.isFinite(scanIntervalMs) && scanIntervalMs > 0 ? scanIntervalMs : 15_000,
+  };
+}
+
 export async function getHyperliquidDashboard(): Promise<DashboardPayload> {
-  const env = getServerEnv();
+  const env = dashboardTuning();
   if (skipNetwork()) {
-    return emptyPayload(env.YIELD_DELTA_TRIGGER_BPS, env.APY_SANITY_CEILING_BPS, env.SCAN_INTERVAL_MS);
+    return emptyPayload(env.triggerBps, env.ceilingBps, env.scanIntervalMs);
   }
 
   const result = await discoverOpportunities();
   setOpportunitySnapshot(result.opportunities, result.fetchedAt, result.errors);
   const [rpc, info] = await Promise.all([probeHyperEvm(), probeHyperCore()]);
   const engine = engineView(result.errors, result.opportunities, result.fetchedAt);
-  const venues = result.opportunities.map((opp) => mapVenueRow(opp, env.APY_SANITY_CEILING_BPS));
-  const rows = gapRows(result.opportunities, env.YIELD_DELTA_TRIGGER_BPS, env.APY_SANITY_CEILING_BPS);
+  const venues = result.opportunities.map((opp) => mapVenueRow(opp, env.ceilingBps));
+  const rows = gapRows(result.opportunities, env.triggerBps, env.ceilingBps);
   const banners: BannerKind[] = ["dry-run"];
   if (!rpc.ok || !info.ok) banners.push("error");
   else banners.push("safe");
@@ -250,8 +260,8 @@ export async function getHyperliquidDashboard(): Promise<DashboardPayload> {
       },
     },
     yields: {
-      triggerBps: env.YIELD_DELTA_TRIGGER_BPS,
-      ceilingBps: env.APY_SANITY_CEILING_BPS,
+      triggerBps: env.triggerBps,
+      ceilingBps: env.ceilingBps,
       rows,
       venues,
       enterCount: countIndication(venues, "ENTER"),
@@ -262,7 +272,7 @@ export async function getHyperliquidDashboard(): Promise<DashboardPayload> {
     disclaimer: result.disclaimer || INDICATION_DISCLAIMER,
     engine,
     stale: false,
-    scanIntervalMs: env.SCAN_INTERVAL_MS,
+    scanIntervalMs: env.scanIntervalMs,
     risk: null,
     execution: {
       state: "idle",

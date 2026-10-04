@@ -58,7 +58,7 @@ describe("enter claim withdraw", () => {
     const result = enterPool("missing-pool");
     assert.equal(result.ok, false);
     assert.equal(result.dryRun, true);
-    assert.match(result.error ?? "", /Check yields first/);
+    assert.match(result.error ?? "", /yields first/);
   });
 
   it("does not claim or withdraw a missing position", () => {

@@ -21,7 +21,7 @@ const ServerEnvSchema = z.object({
   AGENT_PRIVATE_KEY: z.string().optional().default(""),
   AGENT_DRY_RUN: z
     .enum(["true", "false", "1", "0"])
-    .default("true")
+    .catch("true")
     .transform((v) => v === "true" || v === "1"),
   JUPITER_API_URL: z.string().url().default("https://lite-api.jup.ag/swap/v1"),
   JUPITER_API_KEY: z.string().optional().default(""),

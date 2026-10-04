@@ -3,15 +3,17 @@
  * ENTER, CLAIM, and WITHDRAW never sign, send, or broadcast.
  */
 
-import { NATIVE_SOL_MINT, USDC_MINT, USDT_MINT } from "@/lib/constants";
 import { earnedFromApr } from "@/lib/accrual";
 import { logInfo, logWarn } from "@/engine/logger";
 import { singleton } from "@/engine/singleton";
-import { yieldSensor } from "@/engine/YieldSensor";
 import { getStoredOpportunity } from "@/engine/opportunity-store";
 import { venueFamily } from "@/lib/venues";
 import { aprFromApy, toBps } from "@/engine/rates";
 import type { VenueFamily, VenueId } from "@/types/hettnet";
+
+const NATIVE_SOL_MINT = "So11111111111111111111111111111111111111112";
+const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB";
 
 export { dailyEarn, earnedFromApr, YEAR_MS } from "@/lib/accrual";
 const MAX_ACTIONS = 80;
@@ -111,24 +113,19 @@ export function enterPool(poolId: string): PositionActionResult {
   if (open) return fail("Already in this pool. Claim or withdraw on Execution.");
 
   const hl = getStoredOpportunity(id);
-  const pool = yieldSensor.getPools().find((row) => row.id === id);
-  const apy = hl
-    ? hl.apyTotal ?? hl.apyBase
-    : pool && pool.rateQuality === "ok"
-      ? pool.apy
-      : null;
+  const apy = hl ? hl.apyTotal ?? hl.apyBase : null;
   if (hl?.signal?.indication === "AVOID") {
     return fail(hl.signal.reasons[0] ?? "This pool is marked AVOID.");
   }
-  if (apy === null || !(apy > 0)) {
-    return fail(pool || hl ? "This pool does not have a usable APY." : "Check yields first, then ENTER a printed pool.");
+  if (!hl || apy === null || !(apy > 0)) {
+    return fail(hl ? "This pool does not have a usable APY." : "Load venue yields first, then ENTER a printed pool.");
   }
-  const apyBps = hl ? toBps(apy) : pool!.apyBps;
-  const aprBps = hl ? (hl.apr !== null ? toBps(hl.apr) : toBps(aprFromApy(apy))) : pool!.aprBps;
-  const symbol = hl ? hl.assets.map((a) => a.symbol).join("/") : pool!.symbol;
-  const mint = hl ? (hl.assets[0]?.id ?? hl.id) : pool!.mint;
-  const venue = (hl ? hl.venue : pool!.venue) as VenueId;
-  const venueAddress = hl ? (hl.assets[0]?.id ?? hl.id) : pool!.venueAddress;
+  const apyBps = toBps(apy);
+  const aprBps = hl.apr !== null ? toBps(hl.apr) : toBps(aprFromApy(apy));
+  const symbol = hl.assets.map((a) => a.symbol).join("/");
+  const mint = hl.assets[0]?.id ?? hl.id;
+  const venue = hl.venue as VenueId;
+  const venueAddress = hl.assets[0]?.id ?? hl.id;
 
   const size = defaultPrincipal(symbol, mint);
   const now = Date.now();
