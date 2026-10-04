@@ -8,7 +8,7 @@ export function Chip({ children, className }: { children: ReactNode; className?:
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full bg-[#1A1A1A] px-3 py-1.5 font-mono text-[12px] font-medium tracking-[0.08em] text-[#F5F5F5] uppercase",
+        "inline-flex max-w-full items-center rounded-full bg-[#1A1A1A] px-3 py-1.5 font-mono text-[12px] font-medium tracking-[0.08em] text-[#F5F5F5] uppercase",
         className,
       )}
     >
@@ -116,12 +116,18 @@ export function Drawer({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="h-full w-full max-w-md overflow-y-auto border-l border-[#2B313B] bg-[#0A0A0A] p-6"
+        className="h-full w-full max-w-md overflow-y-auto border-l border-[#2B313B] bg-[#0A0A0A] px-5 sm:px-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-6 flex items-start justify-between gap-4">
-          <h2 className="font-sans text-[28px] leading-none font-semibold tracking-[-0.02em]">{title}</h2>
-          <button type="button" className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase" onClick={onClose}>
+          <h2 className="min-w-0 break-words font-sans text-[22px] leading-tight font-semibold tracking-[-0.02em] sm:text-[28px] sm:leading-none">
+            {title}
+          </h2>
+          <button
+            type="button"
+            className="min-h-11 shrink-0 font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase"
+            onClick={onClose}
+          >
             Close
           </button>
         </div>
@@ -196,7 +202,7 @@ export function Segmented<T extends string>({
   label: string;
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className="inline-flex border border-[#2B313B]">
+    <div role="radiogroup" aria-label={label} className="inline-flex max-w-full overflow-x-auto overscroll-x-contain border border-[#2B313B]">
       {options.map((option) => {
         const active = option.value === value;
         return (
@@ -206,7 +212,7 @@ export function Segmented<T extends string>({
             role="radio"
             aria-checked={active}
             className={cn(
-              "h-10 px-3 font-mono text-[12px] tracking-[0.08em] uppercase",
+              "h-11 shrink-0 px-3 font-mono text-[12px] tracking-[0.08em] uppercase",
               active ? "bg-[#1A1A1A] text-[#FFB81C]" : "text-[#9CA3AF]",
             )}
             onClick={() => onChange(option.value)}
@@ -229,7 +235,10 @@ export function Tabs({
   onChange: (id: string) => void;
 }) {
   return (
-    <nav aria-label="Console" className="flex max-w-full gap-x-3 overflow-x-auto pr-2 sm:gap-x-5">
+    <nav
+      aria-label="Console"
+      className="flex w-full max-w-full gap-x-4 overflow-x-auto overscroll-x-contain pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-x-5 [&::-webkit-scrollbar]:hidden"
+    >
       {tabs.map((tab) => {
         const active = tab.id === value;
         return (
@@ -238,7 +247,7 @@ export function Tabs({
             type="button"
             aria-current={active ? "page" : undefined}
             className={cn(
-              "min-h-10 font-mono text-[12px] tracking-[0.08em] uppercase",
+              "min-h-11 shrink-0 font-mono text-[12px] tracking-[0.08em] uppercase",
               active ? "text-[#FFB81C]" : "text-[#9CA3AF] hover:text-[#FFB81C]",
             )}
             onClick={() => onChange(tab.id)}

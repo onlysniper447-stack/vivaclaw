@@ -14,7 +14,7 @@ export function WalletSection() {
           backgroundSize: "56px 56px",
         }}
       />
-      <div className="relative mx-auto grid max-w-[1240px] items-start gap-12 px-5 py-20 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-24 lg:py-28">
+      <div className="relative mx-auto grid max-w-[1240px] items-start gap-10 px-4 py-16 sm:px-5 sm:py-20 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-24 lg:py-28">
         <div>
           <p className="flex items-center gap-3 font-mono text-[11px] font-medium tracking-[0.18em] text-[#FFB81C] uppercase">
             <span className="h-px w-5 bg-[#FFB81C]" aria-hidden />

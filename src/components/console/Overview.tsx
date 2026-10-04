@@ -65,7 +65,7 @@ export function Overview({ data }: { data: DashboardPayload }) {
   return (
     <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div>
-        <h1 className="max-w-3xl font-sans text-[38px] leading-[1.05] font-semibold tracking-[-0.02em] md:text-[52px]">
+        <h1 className="max-w-3xl break-words font-sans text-[28px] leading-[1.15] font-semibold tracking-[-0.02em] sm:text-[38px] sm:leading-[1.05] md:text-[52px]">
           {headline}
         </h1>
         <p className="mt-4 max-w-xl font-sans text-[16px] leading-relaxed font-light text-[#9CA3AF]">

@@ -31,7 +31,7 @@ export function ExecutionBoard({ data }: { data: DashboardPayload }) {
   return (
     <div className="grid gap-16">
       <section>
-        <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Execution</h1>
+        <h1 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px]">Execution</h1>
         <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
           ENTER on Venue yields opens an entry plan: token, layer, approvals, and unsigned calldata. Simulate locally records a dry-run position. Mainnet send is off. Indications are informational, not financial advice. Connecting a wallet never signs.
         </p>

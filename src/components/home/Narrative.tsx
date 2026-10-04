@@ -46,7 +46,7 @@ function Stage({
   children: ReactNode;
 }) {
   return (
-    <div className="relative mx-auto grid max-w-[1240px] items-start gap-12 px-5 py-20 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-24 lg:py-28">
+    <div className="relative mx-auto grid max-w-[1240px] items-start gap-10 px-4 py-16 sm:px-5 sm:py-20 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-24 lg:py-28">
       <div className="lg:sticky lg:top-28 lg:self-start">
         <Label>{kicker}</Label>
         <h2 className="mt-8 max-w-md font-sans text-[22px] leading-[1.2] font-bold tracking-[-0.03em] text-[#F5F5F5] uppercase sm:text-[28px] lg:text-[34px]">
@@ -104,7 +104,7 @@ export function Narrative() {
         </Stage>
       </section>
 
-      <div className="relative mx-auto max-w-[1240px] px-5">
+      <div className="relative mx-auto max-w-[1240px] px-4 sm:px-5">
         <p className="border-y border-white/10 py-6 font-mono text-[10px] tracking-[0.18em] text-[#9CA3AF] uppercase">
           Discover <span className="text-[#FFB81C]">→</span> Evaluate{" "}
           <span className="text-[#FFB81C]">→</span> Act

@@ -13,27 +13,27 @@ export function HomePage() {
     <div className="min-h-screen bg-[#0A0A0A] text-[#F5F5F5]">
       <div className="relative isolate overflow-hidden">
         <HomeAnimatedBackground />
-        <header className="relative z-10 mx-auto flex h-16 max-w-[1240px] items-center justify-between px-5">
-          <Link href="/" className="flex items-center gap-3">
-            <HettnetMark size={36} />
+        <header className="relative z-10 mx-auto flex min-h-16 max-w-[1240px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
+          <Link href="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <HettnetMark size={32} />
             <span className="font-sans text-[16px] font-semibold">Hettnet</span>
           </Link>
-          <nav className="flex items-center gap-6 font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">
-            <a href="#steps" className="hover:text-[#FFB81C]">How it works</a>
-            <a href="#wallet" className="hover:text-[#FFB81C]">Wallet</a>
-            <Link href="/dashboard" className="hover:text-[#FFB81C]">Console</Link>
+          <nav className="flex min-w-0 flex-wrap items-center justify-end gap-x-4 gap-y-2 font-mono text-[11px] tracking-[0.08em] text-[#9CA3AF] uppercase sm:gap-6 sm:text-[12px]">
+            <a href="#steps" className="min-h-11 inline-flex items-center hover:text-[#FFB81C]">How it works</a>
+            <a href="#wallet" className="min-h-11 inline-flex items-center hover:text-[#FFB81C]">Wallet</a>
+            <Link href="/dashboard" className="min-h-11 inline-flex items-center hover:text-[#FFB81C]">Console</Link>
           </nav>
         </header>
 
-        <section className="relative z-10 mx-auto flex min-h-[calc(100vh-64px)] max-w-[1240px] flex-col items-start justify-end px-5 pb-16">
-          <Chip>Hyperliquid · Detect → Evaluate → Enter · Read-only</Chip>
-          <h1 className="mt-8 max-w-5xl font-sans text-[48px] leading-[1.02] font-bold tracking-[-0.05em] sm:text-[72px] lg:text-[96px]">
+        <section className="relative z-10 mx-auto flex min-h-[calc(100svh-64px)] max-w-[1240px] flex-col items-start justify-end px-4 pb-12 sm:px-5 sm:pb-16">
+          <Chip className="flex-wrap whitespace-normal leading-relaxed">Hyperliquid · Detect → Evaluate → Enter · Read-only</Chip>
+          <h1 className="mt-8 max-w-5xl break-words font-sans text-[32px] leading-[1.08] font-bold tracking-[-0.05em] sm:text-[72px] sm:leading-[1.02] lg:text-[96px]">
             See where yield and liquidity <span className="text-[#FFB81C]">earn</span> on Hyperliquid
           </h1>
-          <p className="mt-6 max-w-2xl font-sans text-[22px] leading-relaxed font-light text-[#9CA3AF] sm:text-[28px]">
+          <p className="mt-6 max-w-2xl font-sans text-[18px] leading-relaxed font-light text-[#9CA3AF] sm:text-[28px]">
             Hettnet reads HyperCore lending and HyperEVM venues, then ranks opportunities for people and AI agents. Indications are informational, not financial advice.
           </p>
-          <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
+          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 sm:mt-12">
             <Button variant="primary" asChild>
               <Link href="/dashboard">Open console</Link>
             </Button>
@@ -44,7 +44,7 @@ export function HomePage() {
         </section>
       </div>
 
-      <section className="mx-auto max-w-[1240px] px-5 pb-[140px]">
+      <section className="mx-auto max-w-[1240px] px-4 pb-16 sm:px-5 sm:pb-[140px]">
         <div className="grid border border-[#2B313B] sm:grid-cols-2 lg:grid-cols-4">
           <Figure label="Rates tracked" value="—" note="Open the console to check" />
           <Figure label="Sources" value="6" note="HyperCore, HyperLend, Felix, HyperSwap, Kittenswap, Project X" />
@@ -56,8 +56,8 @@ export function HomePage() {
       <Narrative />
       <WalletSection />
 
-      <section className="mx-auto max-w-[1240px] px-5 pb-[140px]">
-        <h2 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">The gap, in plain sight</h2>
+      <section className="mx-auto max-w-[1240px] px-4 pb-16 sm:px-5 sm:pb-[140px]">
+        <h2 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px]">The gap, in plain sight</h2>
         <div className="mt-8">
           <EmptyState
             title="No comparable gap"
@@ -66,8 +66,8 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1240px] px-5 pb-[140px]">
-        <h2 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">What Hettnet never does</h2>
+      <section className="mx-auto max-w-[1240px] px-4 pb-16 sm:px-5 sm:pb-[140px]">
+        <h2 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px]">What Hettnet never does</h2>
         <ol className="mt-8 divide-y divide-[#2B313B] border-y border-[#2B313B]">
           <Never n="01" text="Sign, send, or broadcast a transaction." />
           <Never n="02" text="Show, store, or log a private key." />
@@ -75,7 +75,7 @@ export function HomePage() {
         </ol>
       </section>
 
-      <footer className="mx-auto max-w-[1240px] px-5 py-8 font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">
+      <footer className="mx-auto max-w-[1240px] px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] font-mono text-[11px] leading-relaxed tracking-[0.08em] text-[#9CA3AF] uppercase sm:px-5 sm:text-[12px]">
         HETTNET · HYPERLIQUID YIELD INTELLIGENCE · READ-ONLY CONSOLE · NOT FINANCIAL ADVICE
       </footer>
     </div>
@@ -96,7 +96,7 @@ function Never({ n, text }: { n: string; text: string }) {
   return (
     <li className="flex gap-6 py-5">
       <span className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF]">{n}</span>
-      <span className="font-sans text-[20px] font-light">{text}</span>
+      <span className="min-w-0 font-sans text-[16px] font-light sm:text-[20px]">{text}</span>
     </li>
   );
 }

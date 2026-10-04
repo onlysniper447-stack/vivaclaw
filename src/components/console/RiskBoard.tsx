@@ -17,7 +17,7 @@ export function RiskBoard({ data }: { data: DashboardPayload }) {
   if (data.yields.venues.length === 0 && data.alerts.length === 0) {
     return (
       <div>
-        <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em] md:text-[52px]">Risk</h1>
+        <h1 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px] md:text-[52px]">Risk</h1>
         <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">{data.disclaimer}</p>
         <div className="mt-8">
           <EmptyState
@@ -32,7 +32,7 @@ export function RiskBoard({ data }: { data: DashboardPayload }) {
   return (
     <div className="grid gap-10">
       <div>
-        <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em] md:text-[52px]">Risk: {verdict.word}</h1>
+        <h1 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px] md:text-[52px]">Risk: {verdict.word}</h1>
         <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">{verdict.reason}</p>
         <p className="mt-2 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">{data.disclaimer}</p>
         <p className="num mt-2 font-mono text-[12px] text-[#9CA3AF]" title={utcStamp(data.lastScanAt)}>

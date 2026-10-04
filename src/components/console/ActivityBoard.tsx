@@ -29,7 +29,7 @@ export function ActivityBoard({ data }: { data: DashboardPayload }) {
   if (data.logs.length === 0) {
     return (
       <div>
-        <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Activity</h1>
+        <h1 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px]">Activity</h1>
         <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
           A running log of rates, risk, and simulated actions.
         </p>
@@ -47,7 +47,7 @@ export function ActivityBoard({ data }: { data: DashboardPayload }) {
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Activity</h1>
+          <h1 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px]">Activity</h1>
           <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
             A running log of rates, risk, and simulated actions.
           </p>

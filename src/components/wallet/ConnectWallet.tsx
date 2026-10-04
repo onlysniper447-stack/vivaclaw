@@ -17,7 +17,7 @@ export function ConnectWallet({ compact = false }: { compact?: boolean }) {
 
   if (compact && isConnected && address) {
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-2 sm:gap-3">
         <Chip>{shortenAddress(address)}</Chip>
         <span className="font-mono text-[12px] text-[#9CA3AF] uppercase">{chainLabel(chainId)}</span>
         <button

@@ -104,7 +104,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
   if (!data.yields.rows.some((row) => row.observed) && data.yields.venues.length === 0) {
     return (
       <div>
-        <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Venue yields</h1>
+        <h1 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px]">Venue yields</h1>
         <p className="mt-2 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
           One row is one venue with an ENTER, WATCH, or AVOID indication. {data.disclaimer}
         </p>
@@ -131,7 +131,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
       <section>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="font-sans text-[38px] font-semibold tracking-[-0.02em]">Venue yields</h1>
+            <h1 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px]">Venue yields</h1>
             <p className="mt-2 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
               One row is one venue with an ENTER, WATCH, or AVOID indication and reasons. ENTER opens an entry plan. Claim or withdraw on Execution.
             </p>
@@ -194,7 +194,7 @@ export function YieldBoard({ data }: { data: DashboardPayload }) {
               setQuery(event.target.value);
               setPage(1);
             }}
-            className="max-w-xs"
+            className="w-full max-w-full sm:max-w-xs"
           />
           <Segmented
             label="Indication"

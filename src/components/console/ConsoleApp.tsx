@@ -60,16 +60,15 @@ export function ConsoleApp() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F5F5F5]">
-      <header className="sticky top-0 z-30 border-b border-[#2B313B] bg-[#0A0A0A]">
-        <div className="mx-auto flex min-h-16 max-w-[1240px] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2">
-          <Link href="/" className="flex items-center gap-3">
-            <HettnetMark size={36} />
+      <header className="sticky top-0 z-30 border-b border-[#2B313B] bg-[#0A0A0A] pt-[env(safe-area-inset-top)]">
+        <div className="mx-auto grid max-w-[1240px] grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-3 px-4 py-3 sm:px-5 lg:flex lg:flex-wrap lg:gap-x-6">
+          <Link href="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <HettnetMark size={32} />
             <span className="font-sans text-[16px] font-semibold tracking-[-0.02em]">Hettnet</span>
           </Link>
-          <Tabs value={tab} tabs={[...TABS]} onChange={select} />
-          <div className="ml-auto flex items-center gap-4">
+          <div className="col-start-2 row-start-1 ml-auto flex min-w-0 flex-wrap items-center justify-end gap-2 sm:gap-4">
             <p
-              className="num font-mono text-[12px] text-[#9CA3AF]"
+              className="num hidden font-mono text-[12px] text-[#9CA3AF] sm:block"
               title={desk.data?.lastScanAt ? new Date(desk.data.lastScanAt).toISOString() : undefined}
             >
               {freshnessLabel(desk.data?.lastScanAt ?? null)}
@@ -79,10 +78,13 @@ export function ConsoleApp() {
               <Chip>Dry run</Chip>
             </Tooltip>
           </div>
+          <div className="col-span-2 min-w-0 lg:flex-1">
+            <Tabs value={tab} tabs={[...TABS]} onChange={select} />
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1240px] px-5 pb-[72px] pt-12">
+      <main className="mx-auto max-w-[1240px] min-w-0 px-4 pb-[max(4.5rem,env(safe-area-inset-bottom))] pt-8 sm:px-5 sm:pt-12">
         {showCheck ? (
           <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
             <CheckYields lastChecked={desk.data?.lastScanAt ?? null} />
@@ -125,7 +127,7 @@ export function ConsoleApp() {
         ) : null}
       </main>
       <footer className="border-t border-[#2B313B]">
-        <p className="mx-auto max-w-[1240px] px-5 py-4 font-sans text-[14px] font-light text-[#9CA3AF]">
+        <p className="mx-auto max-w-[1240px] px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] font-sans text-[14px] font-light text-[#9CA3AF] sm:px-5">
           {desk.data?.disclaimer ?? "Indications are informational, not financial advice."} Non-custodial: the app never holds funds or keys.
         </p>
       </footer>
