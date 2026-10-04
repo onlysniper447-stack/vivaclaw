@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ConsoleApp } from "@/components/console/ConsoleApp";
+
+export const metadata: Metadata = {
+  title: "Console",
+};
 
 export default function DashboardPage() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { HettnetMark } from "@/components/brand/HettnetMark";
 import { HomeAnimatedBackground } from "@/components/home/HomeAnimatedBackground";
 import { Narrative } from "@/components/home/Narrative";
 import { WalletSection } from "@/components/home/WalletSection";
@@ -15,7 +15,7 @@ export function HomePage() {
         <HomeAnimatedBackground />
         <header className="relative z-10 mx-auto flex h-16 max-w-[1240px] items-center justify-between px-5">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.svg" width={30} height={30} alt="Hettnet" />
+            <HettnetMark size={36} />
             <span className="font-sans text-[16px] font-semibold">Hettnet</span>
           </Link>
           <nav className="flex items-center gap-6 font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">

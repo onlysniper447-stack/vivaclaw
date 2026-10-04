@@ -15,13 +15,30 @@ const geistMono = Geist_Mono({
   weight: ["400", "500"],
 });
 
+const description =
+  "Hettnet is yield and liquidity-pool intelligence for Hyperliquid, for people and AI agents. Indications are informational, not financial advice. Non-custodial: the app never holds funds or keys.";
+
 export const metadata: Metadata = {
-  title: "Hettnet",
-  description:
-    "Hettnet is yield and liquidity-pool intelligence for Hyperliquid, for people and AI agents. Indications are informational, not financial advice. Non-custodial: the app never holds funds or keys.",
+  title: {
+    default: "Hettnet",
+    template: "%s · Hettnet",
+  },
+  applicationName: "Hettnet",
+  description,
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/logo.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+  },
+  openGraph: {
+    title: "Hettnet",
+    description,
+    siteName: "Hettnet",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Hettnet",
+    description,
   },
 };
 

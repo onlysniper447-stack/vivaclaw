@@ -1,8 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { HettnetMark } from "@/components/brand/HettnetMark";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CheckYields } from "@/components/console/CheckYields";
 import { ConnectWallet } from "@/components/wallet/ConnectWallet";
@@ -63,7 +63,7 @@ export function ConsoleApp() {
       <header className="sticky top-0 z-30 border-b border-[#2B313B] bg-[#0A0A0A]">
         <div className="mx-auto flex min-h-16 max-w-[1240px] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.svg" width={30} height={30} alt="Hettnet" />
+            <HettnetMark size={36} />
             <span className="font-sans text-[16px] font-semibold tracking-[-0.02em]">Hettnet</span>
           </Link>
           <Tabs value={tab} tabs={[...TABS]} onChange={select} />
