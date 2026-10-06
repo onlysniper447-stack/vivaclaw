@@ -193,6 +193,11 @@ export function encodeErc4626Deposit(vault: Address, asset: Address, amount: big
   ];
 }
 
+/** AVOID never produces an entry plan. ENTER and WATCH may. */
+export function entryPlanAllowed(opp: Pick<Opportunity, "signal">): boolean {
+  return opp.signal?.indication !== "AVOID";
+}
+
 export function buildEntryPlan(
   opp: Opportunity,
   opts: { account?: Address | null; amountWei?: bigint } = {},
@@ -223,6 +228,26 @@ export function buildEntryPlan(
     risks,
     disclaimer: INDICATION_DISCLAIMER,
   };
+
+  if (!entryPlanAllowed(opp)) {
+    return {
+      ...base,
+      requiredToken: {
+        symbol: opp.assets[0]?.symbol ?? symbol,
+        id: opp.assets[0]?.id ?? opp.id,
+        layer: opp.layer,
+      },
+      steps: [
+        {
+          title: "AVOID",
+          detail: opp.signal?.reasons[0] ?? "This print is marked AVOID. No entry plan.",
+        },
+      ],
+      txs: [],
+      deepLink: null,
+      coreWeiDecimalsAssumed: null,
+    };
+  }
 
   if (opp.venue === "hypercore") {
     const index = Number(opp.id.split(":").at(-1));

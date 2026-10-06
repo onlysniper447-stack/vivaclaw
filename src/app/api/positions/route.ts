@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   const { action, poolId, positionId } = parsed.data;
   const result =
     action === "enter"
-      ? enterPool(poolId ?? "")
+      ? await enterPool(poolId ?? "")
       : action === "claim"
         ? claimPool(positionId ?? "")
         : withdrawPool(positionId ?? "");

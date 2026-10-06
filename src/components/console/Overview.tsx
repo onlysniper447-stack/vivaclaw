@@ -69,7 +69,7 @@ export function Overview({ data }: { data: DashboardPayload }) {
           {headline}
         </h1>
         <p className="mt-4 max-w-xl font-sans text-[16px] leading-relaxed font-light text-[#9CA3AF]">
-          {data.disclaimer} Dry run is on. Nothing on this page is signed or sent.
+          {data.disclaimer} Nothing on this page is signed or sent.
         </p>
         {unusual ? (
           <p className="mt-4 border-l-2 border-[#FFB81C] pl-4 font-sans text-[16px] font-light text-[#F5F5F5]">

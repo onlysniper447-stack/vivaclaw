@@ -33,7 +33,7 @@ export function ExecutionBoard({ data }: { data: DashboardPayload }) {
       <section>
         <h1 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px]">Execution</h1>
         <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-          ENTER on Venue yields opens an entry plan: token, layer, approvals, and unsigned calldata. Simulate locally records a dry-run position. Mainnet send is off. Indications are informational, not financial advice. Connecting a wallet never signs.
+          ENTER on Venue yields opens an entry plan: token, layer, approvals, and unsigned calldata. Simulate locally records a simulated position. Mainnet send is off. Indications are informational, not financial advice. Connecting a wallet never signs.
         </p>
         {act.isError ? (
           <p className="mt-4 font-sans text-[16px] font-light text-[#EF4444]">
@@ -55,7 +55,7 @@ export function ExecutionBoard({ data }: { data: DashboardPayload }) {
           <div className="mt-8">
             <EmptyState
               title="No open pool"
-              body="ENTER a lend or LP row on Venue yields. The entry plan encodes 1 unit of stables or 0.01 HYPE. Simulate locally records a dry-run position. Mainnet send is off."
+              body="ENTER a lend or LP row on Venue yields. The entry plan encodes 1 unit of stables or 0.01 HYPE. Simulate locally records a simulated position. Mainnet send is off."
             />
           </div>
         ) : (

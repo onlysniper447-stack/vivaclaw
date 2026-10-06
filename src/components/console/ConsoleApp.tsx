@@ -15,6 +15,7 @@ import { RiskBoard } from "@/components/console/RiskBoard";
 import { YieldBoard } from "@/components/console/YieldBoard";
 import { useDesk } from "@/components/console/useDesk";
 import { Chip, EmptyState, Skeleton, Tabs, Tooltip } from "@/components/ui/kit";
+import { CONSOLE_STATUS_CHIPS } from "@/lib/console-status";
 import { freshnessLabel } from "@/lib/present";
 
 const TABS = [
@@ -76,10 +77,15 @@ export function ConsoleApp() {
               {freshnessLabel(desk.data?.lastScanAt ?? null)}
             </p>
             <ConnectWallet compact />
-            <Chip>Testnet</Chip>
-            <Tooltip label="Indications are informational, not financial advice. The console never signs, sends, or broadcasts. HyperEVM chain 998.">
-              <Chip>Dry run</Chip>
-            </Tooltip>
+            {CONSOLE_STATUS_CHIPS.map((chip) =>
+              chip.tooltip ? (
+                <Tooltip key={chip.label} label={chip.tooltip}>
+                  <Chip>{chip.label}</Chip>
+                </Tooltip>
+              ) : (
+                <Chip key={chip.label}>{chip.label}</Chip>
+              ),
+            )}
           </div>
           <div className="col-span-2 min-w-0 lg:flex-1">
             <Tabs value={tab} tabs={[...TABS]} onChange={select} />

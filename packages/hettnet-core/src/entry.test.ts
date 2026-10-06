@@ -9,6 +9,7 @@ import {
   encodeCoreWriterSupply,
   encodeErc4626Deposit,
   encodeHyperlendSupply,
+  entryPlanAllowed,
   hyperlendPoolAbi,
   tokenDecimals,
 } from "./entry";
@@ -127,6 +128,37 @@ describe("buildEntryPlan", () => {
     );
     assert.equal(plan.txs.length, 0);
     assert.equal(plan.signNetwork, "testnet");
+  });
+
+  it("refuses an AVOID print: no txs, no deep link", () => {
+    const avoid = opp({
+      id: "hypercore:lend:0",
+      venue: "hypercore",
+      layer: "core",
+      assets: [{ symbol: "USDC (HyperCore)", id: "core:0" }],
+      apyTotal: 0.12,
+      signal: { indication: "AVOID", reasons: ["Paused reserve."], alerts: ["paused"] },
+    });
+    assert.equal(entryPlanAllowed(avoid), false);
+    const plan = buildEntryPlan(avoid, { account });
+    assert.equal(plan.indication, "AVOID");
+    assert.equal(plan.txs.length, 0);
+    assert.equal(plan.deepLink, null);
+    assert.equal(plan.steps[0]?.title, "AVOID");
+  });
+
+  it("still encodes a WATCH HyperCore plan", () => {
+    const watch = opp({
+      id: "hypercore:lend:1",
+      venue: "hypercore",
+      layer: "core",
+      assets: [{ symbol: "USDC (HyperCore)", id: "core:1" }],
+      signal: { indication: "WATCH", reasons: ["Near kink."], alerts: ["kink-proximity"] },
+    });
+    assert.equal(entryPlanAllowed(watch), true);
+    const plan = buildEntryPlan(watch, { account });
+    assert.equal(plan.indication, "WATCH");
+    assert.equal(plan.txs.length, 1);
   });
 
   it("deep-links LPs without in-app mint calldata", () => {

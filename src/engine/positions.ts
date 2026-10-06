@@ -6,11 +6,11 @@
 import { earnedFromApr } from "@/lib/accrual";
 import { logInfo, logWarn } from "@/engine/logger";
 import { singleton } from "@/engine/singleton";
-import { getStoredOpportunity } from "@/engine/opportunity-store";
+import { loadOpportunityById, type DiscoverFn } from "@/engine/opportunity-store";
 import { venueFamily } from "@/lib/venues";
 import { aprFromApy, toBps } from "@/engine/rates";
 import type { VenueFamily, VenueId } from "@/types/hettnet";
-import { CIRCLE_USDC, HYPE_SYSTEM_ADDRESS, USDT0, WHYPE_ADDRESS } from "hettnet-core";
+import { CIRCLE_USDC, entryPlanAllowed, HYPE_SYSTEM_ADDRESS, USDT0, WHYPE_ADDRESS } from "hettnet-core";
 
 export { dailyEarn, earnedFromApr, YEAR_MS } from "@/lib/accrual";
 const MAX_ACTIONS = 80;
@@ -110,20 +110,20 @@ function fail(error: string): PositionActionResult {
   return { ok: false, dryRun: true, error, position: null, action: null };
 }
 
-export function enterPool(poolId: string): PositionActionResult {
+export async function enterPool(poolId: string, discover?: DiscoverFn): Promise<PositionActionResult> {
   const id = poolId.trim();
   if (!id) return fail("Pick a pool to enter.");
 
   const open = live.positions.find((row) => row.poolId === id && row.status === "open");
   if (open) return fail("Already in this pool. Claim or withdraw on Execution.");
 
-  const hl = getStoredOpportunity(id);
+  const hl = await loadOpportunityById(id, discover);
   const apy = hl ? hl.apyTotal ?? hl.apyBase : null;
-  if (hl?.signal?.indication === "AVOID") {
-    return fail(hl.signal.reasons[0] ?? "This pool is marked AVOID.");
+  if (hl && !entryPlanAllowed(hl)) {
+    return fail(hl.signal?.reasons[0] ?? "This pool is marked AVOID.");
   }
   if (!hl || apy === null || !(apy > 0)) {
-    return fail(hl ? "This pool does not have a usable APY." : "Load venue yields first, then ENTER a printed pool.");
+    return fail(hl ? "This pool does not have a usable APY." : "That venue print is not in the current yield list.");
   }
   const apyBps = toBps(apy);
   const aprBps = hl.apr !== null ? toBps(hl.apr) : toBps(aprFromApy(apy));

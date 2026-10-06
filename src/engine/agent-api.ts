@@ -3,6 +3,7 @@ import {
   INDICATION_DISCLAIMER,
   buildEntryPlan,
   discoverOpportunities,
+  entryPlanAllowed,
   evmClient,
   scoreOpportunity,
   simulateSupplyApy,
@@ -18,6 +19,7 @@ import {
   getStoredOpportunity,
   lastOpportunityFetchAt,
   listStoredOpportunities,
+  loadOpportunityById,
   setOpportunitySnapshot,
 } from "@/engine/opportunity-store";
 import { parseEvmAddress } from "@/lib/wallet/evm";
@@ -242,14 +244,13 @@ export function listAlerts() {
 }
 
 export async function proposeEntry(input: { id: string; account?: string | null; amountWei?: string | null }) {
-  await ensureOpportunities();
-  const opportunity = getStoredOpportunity(input.id);
+  const opportunity = await loadOpportunityById(input.id);
   if (!opportunity) {
-    return { error: "Load opportunities first, then propose an entry.", status: 404 as const };
+    return { error: "That venue print is not in the current yield list.", status: 404 as const };
   }
-  if (opportunity.signal?.indication === "AVOID") {
+  if (!entryPlanAllowed(opportunity)) {
     return {
-      error: opportunity.signal.reasons[0] ?? "This print is marked AVOID.",
+      error: opportunity.signal?.reasons[0] ?? "This print is marked AVOID.",
       indication: "AVOID" as const,
       status: 400 as const,
     };

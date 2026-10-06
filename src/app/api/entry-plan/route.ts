@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { formatEther, type Address, type Hex } from "viem";
-import { buildEntryPlan, evmClient } from "hettnet-core";
-import { getStoredOpportunity } from "@/engine/opportunity-store";
+import { buildEntryPlan, entryPlanAllowed, evmClient } from "hettnet-core";
+import { loadOpportunityById } from "@/engine/opportunity-store";
 import { parseEvmAddress } from "@/lib/wallet/evm";
 
 export const runtime = "nodejs";
@@ -15,13 +15,13 @@ export async function GET(request: Request) {
   if (!id) {
     return NextResponse.json({ error: "Pick a venue print first." }, { status: 400 });
   }
-  const opp = getStoredOpportunity(id);
+  const opp = await loadOpportunityById(id);
   if (!opp) {
-    return NextResponse.json({ error: "Load venue yields first, then open an entry plan." }, { status: 404 });
+    return NextResponse.json({ error: "That venue print is not in the current yield list." }, { status: 404 });
   }
-  if (opp.signal?.indication === "AVOID") {
+  if (!entryPlanAllowed(opp)) {
     return NextResponse.json(
-      { error: opp.signal.reasons[0] ?? "This print is marked AVOID.", indication: "AVOID" },
+      { error: opp.signal?.reasons[0] ?? "This print is marked AVOID.", indication: "AVOID" },
       { status: 400 },
     );
   }

@@ -61,6 +61,7 @@ export {
   encodeCoreWriterSupply,
   encodeErc4626Deposit,
   encodeHyperlendSupply,
+  entryPlanAllowed,
   tokenDecimals,
   type EntryPlan,
   type PlannedTx,

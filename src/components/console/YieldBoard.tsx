@@ -8,6 +8,7 @@ import { cleanText, downloadCsv, formatPercentBps, formatSignedBps, freshnessLab
 import { venueLabel } from "@/lib/venues";
 import type { DashboardPayload, VenueYieldRow, YieldMonitorRow } from "@/types/dashboard";
 import type { VenueFamily } from "@/types/hettnet";
+import { canEnterYield, planColumnAction } from "@/lib/yield-plan";
 import type { Indication } from "hettnet-core";
 
 const INDICATION_ORDER: Record<Indication, number> = { ENTER: 0, WATCH: 1, AVOID: 2 };
@@ -344,10 +345,6 @@ function GapLine({ row }: { row: YieldMonitorRow }) {
   );
 }
 
-function canEnter(row: VenueYieldRow): boolean {
-  return row.indication !== "AVOID" && row.quality === "ok" && row.apyBps !== null && row.apyBps > 0;
-}
-
 function EnterButton({
   row,
   alreadyOpen,
@@ -357,18 +354,22 @@ function EnterButton({
   alreadyOpen: boolean;
   onEnter: () => void;
 }) {
-  if (alreadyOpen) {
+  const action = planColumnAction(row, alreadyOpen);
+  if (action === "open") {
     return (
       <Button variant="link" asChild>
         <a href="/dashboard?tab=execution">OPEN</a>
       </Button>
     );
   }
+  if (action === "none") {
+    return <span className="font-mono text-[12px] text-[#9CA3AF]">—</span>;
+  }
   return (
     <button
       type="button"
       className="font-mono text-[12px] tracking-[0.08em] text-[#FFB81C] uppercase disabled:text-[#9CA3AF]"
-      disabled={!canEnter(row)}
+      disabled={!canEnterYield(row)}
       onClick={onEnter}
     >
       ENTER
@@ -386,7 +387,7 @@ function VenueDetail({
   alreadyOpen: boolean;
 }) {
   const net = row.grossApyBps === null ? null : row.grossApyBps - row.feeBps;
-  const showPlan = row.indication !== "AVOID";
+  const showPlan = planColumnAction(row, false) !== "none";
   return (
     <div className="grid gap-5 font-sans text-[16px] font-light">
       <p>{venueLabel(row.venue)}</p>
@@ -411,7 +412,7 @@ function VenueDetail({
         <div className="border-t border-[#2B313B] pt-5">
           <p className="font-mono text-[12px] tracking-[0.08em] text-[#9CA3AF] uppercase">Entry plan</p>
           <div className="mt-4">
-            <EntryPlanPanel poolId={row.id} canSimulate={canEnter(row)} alreadyOpen={alreadyOpen} />
+            <EntryPlanPanel poolId={row.id} canSimulate={canEnterYield(row)} alreadyOpen={alreadyOpen} />
           </div>
         </div>
       ) : (

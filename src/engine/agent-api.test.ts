@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
-import { filterOpportunities, opportunityMatchesRule, simulateRate } from "./agent-api";
+import { beforeEach, describe, it } from "node:test";
+import { filterOpportunities, opportunityMatchesRule, proposeEntry, simulateRate } from "./agent-api";
 import type { AlertRule } from "./alert-store";
 import type { Opportunity } from "hettnet-core";
+import { resetOpportunitySnapshot, setOpportunitySnapshot } from "./opportunity-store";
 
 function opp(partial: Partial<Opportunity> & Pick<Opportunity, "id">): Opportunity {
   return {
@@ -113,5 +114,41 @@ describe("opportunityMatchesRule", () => {
       ),
       false,
     );
+  });
+});
+
+describe("proposeEntry", () => {
+  beforeEach(() => {
+    resetOpportunitySnapshot();
+  });
+
+  it("refuses an AVOID print and does not encode an entry plan", async () => {
+    setOpportunitySnapshot(
+      [
+        opp({
+          id: "hypercore:lend:avoid",
+          apyTotal: 0.2,
+          signal: { indication: "AVOID", reasons: ["Paused reserve."], alerts: ["paused"] },
+        }),
+      ],
+      1,
+      [],
+    );
+    const data = await proposeEntry({ id: "hypercore:lend:avoid" });
+    assert.equal("error" in data, true);
+    if (!("error" in data)) return;
+    assert.equal(data.status, 400);
+    assert.equal(data.indication, "AVOID");
+    assert.equal("txs" in data, false);
+  });
+
+  it("builds a plan from the stored ENTER yield without asking to reload", async () => {
+    setOpportunitySnapshot([opp({ id: "hypercore:lend:0" })], 1, []);
+    const data = await proposeEntry({ id: "hypercore:lend:0" });
+    assert.equal("error" in data, false);
+    if ("error" in data) return;
+    assert.equal(data.opportunityId, "hypercore:lend:0");
+    assert.equal(data.indication, "ENTER");
+    assert.ok(data.txs.length >= 1);
   });
 });
