@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { CIRCLE_USDC } from "hettnet-core";
-import { parseEvmAddress, WALLET_CAPABILITIES } from "./evm";
+import { CIRCLE_USDC, HYPERCORE_TESTNET_USDC_EVM, HYPERCORE_USDC_EVM } from "hettnet-core";
+import { evmHoldingsWatchlist, parseEvmAddress, WALLET_CAPABILITIES } from "./evm";
 import { shortenAddress } from "./shorten";
 
 describe("wallet address", () => {
@@ -17,6 +17,15 @@ describe("wallet address", () => {
 
   it("shortens an address", () => {
     assert.equal(shortenAddress(CIRCLE_USDC), "0xb8…630f");
+  });
+});
+
+describe("holdings watchlist", () => {
+  it("reads the testnet HyperCore USDC contract, not the mainnet bridged USDC", () => {
+    const mints = evmHoldingsWatchlist().map((row) => row.address.toLowerCase());
+    assert.ok(mints.includes(HYPERCORE_TESTNET_USDC_EVM.toLowerCase()));
+    assert.equal(mints.includes(HYPERCORE_USDC_EVM.toLowerCase()), false);
+    assert.equal(mints.includes(CIRCLE_USDC.toLowerCase()), false);
   });
 });
 

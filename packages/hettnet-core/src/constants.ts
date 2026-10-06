@@ -24,6 +24,8 @@ export const HYPERSWAP_APP_URL = "https://app.hyperswap.exchange";
 
 /** HyperCore token 0, bridged to HyperEVM. Distinct from Circle USDC. */
 export const HYPERCORE_USDC_EVM = "0x6b9e773128f453f5c2c60935ee2de2cbc5390a24";
+/** HyperCore token 0 on HyperEVM testnet (chain 998). Distinct from the mainnet bridged USDC. */
+export const HYPERCORE_TESTNET_USDC_EVM = "0x0b80659a4076e9e93c7dbe0f10675a16a3e5c206";
 /** Circle native USDC on HyperEVM. */
 export const CIRCLE_USDC = "0xb88339CB7199b77E23DB6E890353E22632Ba630f";
 export const USDT0 = "0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb";

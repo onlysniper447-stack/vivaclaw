@@ -91,7 +91,7 @@ export function CheckYields({ lastChecked }: { lastChecked: number | null }) {
       </Button>
       <p className="num mt-2 font-mono text-[12px] text-[#9CA3AF]" aria-live="polite">
         {running
-          ? "HyperCore, HyperLend, Felix, HyperSwap"
+          ? "HyperCore testnet"
           : phase === "failure"
             ? detail
             : phase === "success"

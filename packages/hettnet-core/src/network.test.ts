@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { hettnetNetwork, hypercoreInfoUrl, hyperevmRpcUrl, hyperliquidAppUrl } from "./network";
+import {
+  hettnetNetwork,
+  hypercoreInfoUrl,
+  hyperevmRpcUrl,
+  hyperliquidAppUrl,
+  mainnetResearchEnabled,
+} from "./network";
 
 describe("testnet lock", () => {
   it("defaults to testnet", () => {
@@ -11,5 +17,9 @@ describe("testnet lock", () => {
     assert.match(hypercoreInfoUrl(), /hyperliquid-testnet/);
     assert.match(hyperevmRpcUrl(), /hyperliquid-testnet/);
     assert.match(hyperliquidAppUrl(), /hyperliquid-testnet/);
+  });
+
+  it("does not enable mainnet Llama/Morpho/Dexscreener research on testnet", () => {
+    assert.equal(mainnetResearchEnabled(), false);
   });
 });

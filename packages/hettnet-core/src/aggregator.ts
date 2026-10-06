@@ -6,7 +6,7 @@ import { fetchMorphoOpportunities } from "./adapters/morpho";
 import { verifyErc4626Vaults } from "./adapters/verify-vault";
 import { cached } from "./cache";
 import { CACHE_TTL, VERIFY_TOP_N } from "./constants";
-import { hettnetNetwork } from "./network";
+import { hettnetNetwork, mainnetResearchEnabled } from "./network";
 import { collectAlerts, indicationRank, INDICATION_DISCLAIMER, scoreOpportunities } from "./signal";
 import type { DiscoverResult, Opportunity } from "./types";
 
@@ -16,12 +16,14 @@ export async function discoverOpportunities(): Promise<DiscoverResult> {
 
 async function loadAll(): Promise<DiscoverResult> {
   const errors: DiscoverResult["errors"] = [];
-  const buckets = await Promise.all([
-    settle("hypercore", fetchHyperCoreOpportunities),
-    settle("llama", fetchLlamaOpportunities),
-    settle("morpho", fetchMorphoOpportunities),
-    settle("dexscreener", fetchKittenswapOpportunities),
-  ]);
+  const research = mainnetResearchEnabled()
+    ? [
+        settle("llama", fetchLlamaOpportunities),
+        settle("morpho", fetchMorphoOpportunities),
+        settle("dexscreener", fetchKittenswapOpportunities),
+      ]
+    : [];
+  const buckets = await Promise.all([settle("hypercore", fetchHyperCoreOpportunities), ...research]);
 
   const opportunities: Opportunity[] = [];
   for (const bucket of buckets) {

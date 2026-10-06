@@ -3,6 +3,7 @@ import {
   hypercoreInfoUrl,
   hyperevmRpcUrl,
   INDICATION_DISCLAIMER,
+  mainnetResearchEnabled,
   scoreOpportunity,
   type Indication,
   type Opportunity,
@@ -47,6 +48,9 @@ function sourceState(
 ): SourceProgress {
   const err = errors.find((row) => row.source === name || row.source.startsWith(name));
   if (err) return { state: "error", message: err.message };
+  if (!mainnetResearchEnabled() && (name === "llama" || name === "morpho" || name === "dexscreener" || name === "hyperlend")) {
+    return { state: "idle", message: "skipped on testnet" };
+  }
   if (count > 0) return { state: "ok", message: `${count} prints` };
   return { state: "ok", message: "no prints" };
 }

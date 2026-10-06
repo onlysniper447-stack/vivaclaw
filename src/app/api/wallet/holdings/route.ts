@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server";
 import { formatUnits, type Address } from "viem";
-import {
-  CIRCLE_USDC,
-  hypercoreInfoUrl,
-  HYPERCORE_USDC_EVM,
-  USDT0,
-  WHYPE_ADDRESS,
-  evmClient,
-} from "hettnet-core";
-import { parseEvmAddress } from "@/lib/wallet/evm";
+import { hypercoreInfoUrl, evmClient } from "hettnet-core";
+import { evmHoldingsWatchlist, parseEvmAddress } from "@/lib/wallet/evm";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -24,12 +17,7 @@ const erc20Abi = [
   },
 ] as const;
 
-const WATCH: { symbol: string; address: Address; decimals: number }[] = [
-  { symbol: "USDC (Circle)", address: CIRCLE_USDC, decimals: 6 },
-  { symbol: "USDC (HyperCore)", address: HYPERCORE_USDC_EVM, decimals: 8 },
-  { symbol: "USDT0", address: USDT0, decimals: 6 },
-  { symbol: "WHYPE", address: WHYPE_ADDRESS, decimals: 18 },
-];
+const WATCH = evmHoldingsWatchlist();
 
 export async function GET(request: Request) {
   const address = parseEvmAddress(new URL(request.url).searchParams.get("address"));

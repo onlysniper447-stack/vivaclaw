@@ -34,3 +34,8 @@ export function hyperevmRpcUrl(): string {
 export function hyperliquidAppUrl(): string {
   return hettnetNetwork() === "testnet" ? HYPERLIQUID_TESTNET_APP_URL : HYPERLIQUID_APP_URL;
 }
+
+/** Llama, Morpho Blue, and Dexscreener publish mainnet HyperEVM prints only. */
+export function mainnetResearchEnabled(): boolean {
+  return hettnetNetwork() === "mainnet";
+}

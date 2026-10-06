@@ -96,7 +96,7 @@ async function runScan(): Promise<AgentSnapshot> {
   };
 
   try {
-    const { discoverOpportunities } = await import("hettnet-core");
+    const { discoverOpportunities, mainnetResearchEnabled } = await import("hettnet-core");
     const { setOpportunitySnapshot } = await import("@/engine/opportunity-store");
     const result = await discoverOpportunities();
     setOpportunitySnapshot(result.opportunities, result.fetchedAt, result.errors);
@@ -109,11 +109,13 @@ async function runScan(): Promise<AgentSnapshot> {
       return { state: "ok", message: `${countFor(aliases[0] ?? name)} prints` };
     };
 
+    const skipResearch = !mainnetResearchEnabled();
+    const skipped: SourceProgress = { state: "idle", message: "skipped on testnet" };
     live.engineState.sources.hypercore = mark("hypercore", ["hypercore"]);
-    live.engineState.sources.llama = mark("llama", ["llama"]);
-    live.engineState.sources.morpho = mark("morpho", ["morpho"]);
-    live.engineState.sources.dexscreener = mark("dexscreener", ["dexscreener"]);
-    live.engineState.sources.hyperlend = mark("hyperlend", ["hyperlend"]);
+    live.engineState.sources.llama = skipResearch ? skipped : mark("llama", ["llama"]);
+    live.engineState.sources.morpho = skipResearch ? skipped : mark("morpho", ["morpho"]);
+    live.engineState.sources.dexscreener = skipResearch ? skipped : mark("dexscreener", ["dexscreener"]);
+    live.engineState.sources.hyperlend = skipResearch ? skipped : mark("hyperlend", ["hyperlend"]);
 
     live.snapshot.opportunities = result.opportunities.map((opp) => {
       const apyBps =

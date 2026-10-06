@@ -21,6 +21,7 @@ export {
   HYPERCORE_INFO_URL,
   HYPERCORE_TESTNET_INFO_URL,
   HYPERCORE_TOKENS,
+  HYPERCORE_TESTNET_USDC_EVM,
   HYPERCORE_USDC_EVM,
   HYPEREVM_CHAIN_ID,
   HYPEREVM_RPC_URL,
@@ -66,9 +67,19 @@ export {
   type PlanStep,
 } from "./entry";
 export { hyperEvm, hyperEvmTestnet, evmClient } from "./chain";
-export { hettnetNetwork, hypercoreInfoUrl, hyperevmRpcUrl, hyperliquidAppUrl } from "./network";
+export {
+  hettnetNetwork,
+  hypercoreInfoUrl,
+  hyperevmRpcUrl,
+  hyperliquidAppUrl,
+  mainnetResearchEnabled,
+} from "./network";
 export { discoverOpportunities } from "./aggregator";
-export { fetchHyperCoreOpportunities } from "./adapters/hypercore";
+export {
+  fetchHyperCoreOpportunities,
+  mapHyperCoreReserve,
+  resolveHyperCoreToken,
+} from "./adapters/hypercore";
 export { fetchLlamaOpportunities } from "./adapters/llama";
 export { fetchMorphoOpportunities } from "./adapters/morpho";
 export { fetchKittenswapOpportunities } from "./adapters/dexscreener";
