@@ -36,7 +36,7 @@ export function WalletBoard() {
     <div>
       <h1 className="font-sans text-[28px] font-semibold tracking-[-0.02em] sm:text-[38px]">Wallet</h1>
       <p className="mt-3 max-w-2xl font-sans text-[16px] font-light text-[#9CA3AF]">
-        Connect to read HYPE, Circle USDC, HyperCore USDC, USDT0, and WHYPE. Connecting never signs.
+        Connect to read HYPE and tokens on HyperEVM testnet (chain 998). Connecting never signs.
         HyperCore USDC and Circle USDC stay separate.
       </p>
       <div className="mt-8 border-t border-[#2B313B] pt-8">

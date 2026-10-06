@@ -46,6 +46,10 @@ export interface Opportunity {
   /** Simple APR. Null when the source only prints APY — never derived for display. */
   apr: number | null;
   tvl: number | null;
+  /** Token units. HyperCore reserves only. */
+  supplied?: number | null;
+  /** Token units. HyperCore reserves only. */
+  borrowed?: number | null;
   utilization: number | null;
   volume24h: number | null;
   volume7d: number | null;

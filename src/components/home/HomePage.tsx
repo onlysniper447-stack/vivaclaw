@@ -26,7 +26,7 @@ export function HomePage() {
         </header>
 
         <section className="relative z-10 mx-auto flex min-h-[calc(100svh-64px)] max-w-[1240px] flex-col items-start justify-end px-4 pb-12 sm:px-5 sm:pb-16">
-          <Chip className="flex-wrap whitespace-normal leading-relaxed">Hyperliquid · Detect → Evaluate → Enter · Read-only</Chip>
+          <Chip className="flex-wrap whitespace-normal leading-relaxed">Hyperliquid testnet · Detect → Evaluate → Enter · Read-only</Chip>
           <h1 className="mt-8 max-w-5xl break-words font-sans text-[32px] leading-[1.08] font-bold tracking-[-0.05em] sm:text-[72px] sm:leading-[1.02] lg:text-[96px]">
             See where yield and liquidity <span className="text-[#FFB81C]">earn</span> on Hyperliquid
           </h1>

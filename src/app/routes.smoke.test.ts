@@ -9,7 +9,9 @@ const paths = [
   "/dashboard?tab=execution",
   "/dashboard?tab=activity",
   "/dashboard?tab=wallet",
+  "/dashboard?tab=agents",
   "/api/health",
+  "/api/v1",
 ];
 
 async function findBase(): Promise<string | null> {

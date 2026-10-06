@@ -5,7 +5,7 @@ import { Chip } from "@/components/ui/kit";
 import { chainLabel } from "@/lib/wallet/evm";
 import { shortenAddress } from "@/lib/wallet/shorten";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
-import { hyperEvm, hyperEvmTestnet } from "hettnet-core";
+import { hyperEvmTestnet } from "hettnet-core";
 
 export function ConnectWallet({ compact = false }: { compact?: boolean }) {
   const { address, isConnected, isConnecting, chainId } = useAccount();
@@ -37,7 +37,7 @@ export function ConnectWallet({ compact = false }: { compact?: boolean }) {
         variant="outline"
         size="sm"
         disabled={!connector || pending}
-        onClick={() => connector && connect({ connector })}
+        onClick={() => connector && connect({ connector, chainId: hyperEvmTestnet.id })}
       >
         {pending ? "Connecting…" : "Connect wallet"}
       </Button>
@@ -48,8 +48,8 @@ export function ConnectWallet({ compact = false }: { compact?: boolean }) {
     <div>
       <p className="font-mono text-[11px] tracking-[0.16em] text-[#FFB81C] uppercase">Read-only session</p>
       <p className="mt-2 max-w-md font-sans text-[16px] font-light text-[#9CA3AF]">
-        Connecting shares a public address so HyperEVM and HyperCore balances can be read. Hettnet
-        does not sign, send, or broadcast a transaction when you connect.
+        Connecting shares a public address so HyperEVM testnet and HyperCore testnet balances can be
+        read. Hettnet does not sign, send, or broadcast a transaction when you connect.
       </p>
       {isConnected && address ? (
         <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -65,16 +65,6 @@ export function ConnectWallet({ compact = false }: { compact?: boolean }) {
               Use testnet
             </Button>
           ) : null}
-          {chainId !== hyperEvm.id ? (
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={switching}
-              onClick={() => switchChain({ chainId: hyperEvm.id })}
-            >
-              Use HyperEVM
-            </Button>
-          ) : null}
           <Button variant="outline" size="sm" onClick={() => disconnect()}>
             Disconnect
           </Button>
@@ -86,7 +76,7 @@ export function ConnectWallet({ compact = false }: { compact?: boolean }) {
               No injected EVM wallet found. Install a browser wallet. Connecting still never signs.
             </p>
           ) : (
-            <Button variant="outline" disabled={pending} onClick={() => connect({ connector })}>
+            <Button variant="outline" disabled={pending} onClick={() => connect({ connector, chainId: hyperEvmTestnet.id })}>
               {pending ? "Connecting…" : "Connect EVM wallet"}
             </Button>
           )}

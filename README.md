@@ -24,7 +24,7 @@ src/
   types/               shared interfaces
 ```
 
-Engine code is server-only by convention. Client components talk to `/api/*`.
+Engine code is server-only by convention. Client components talk to `/api/*`. Agents use `/api/v1` and `POST /api/mcp`. See `docs/agents.md` and `skills/hettnet/SKILL.md`.
 
 ## Setup
 
@@ -38,7 +38,7 @@ Open [http://localhost:3005](http://localhost:3005) for the homepage. The operat
 
 ## Environment
 
-See `.env.example`. Connecting a wallet is read-only and never signs. Keep `AGENT_DRY_RUN=true`. Do not put a private key in the repo.
+See `.env.example`. The app is locked to HyperEVM testnet (chain 998). Connecting a wallet is read-only and never signs. Keep `AGENT_DRY_RUN=true`. Do not put a private key in the repo.
 
 ## Scripts
 

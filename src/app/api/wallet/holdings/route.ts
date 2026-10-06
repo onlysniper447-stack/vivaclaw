@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { formatUnits, type Address } from "viem";
 import {
   CIRCLE_USDC,
-  HYPERCORE_INFO_URL,
+  hypercoreInfoUrl,
   HYPERCORE_USDC_EVM,
   USDT0,
   WHYPE_ADDRESS,
@@ -98,7 +98,7 @@ async function loadCoreSpot(user: Address): Promise<{
   detail: string;
 }> {
   try {
-    const res = await fetch(HYPERCORE_INFO_URL, {
+    const res = await fetch(hypercoreInfoUrl(), {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ type: "spotClearinghouseState", user }),

@@ -1,5 +1,7 @@
 import {
   discoverOpportunities,
+  hypercoreInfoUrl,
+  hyperevmRpcUrl,
   INDICATION_DISCLAIMER,
   scoreOpportunity,
   type Indication,
@@ -157,7 +159,7 @@ function engineView(
 async function probeHyperCore(): Promise<ServiceProbe> {
   const started = Date.now();
   try {
-    const res = await fetch("https://api.hyperliquid.xyz/info", {
+    const res = await fetch(hypercoreInfoUrl(), {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ type: "allBorrowLendReserveStates" }),
@@ -183,7 +185,7 @@ async function probeHyperCore(): Promise<ServiceProbe> {
 
 async function probeHyperEvm(): Promise<ServiceProbe> {
   const started = Date.now();
-  const url = process.env.HYPEREVM_RPC_URL?.trim() || "https://rpc.hyperliquid.xyz/evm";
+  const url = hyperevmRpcUrl();
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -192,13 +194,13 @@ async function probeHyperEvm(): Promise<ServiceProbe> {
       signal: AbortSignal.timeout(6_000),
     });
     const body = (await res.json()) as { result?: string };
-    const ok = body.result === "0x3e7";
+    const ok = body.result === "0x3e6";
     return {
       name: "HyperEVM",
       ok,
       configured: true,
       latencyMs: Date.now() - started,
-      detail: ok ? "chainId 999" : `chainId ${body.result ?? "unknown"}`,
+      detail: ok ? "chainId 998 testnet" : `chainId ${body.result ?? "unknown"}`,
     };
   } catch (error) {
     return {

@@ -5,6 +5,7 @@ import {
   HYPEREVM_TESTNET_CHAIN_ID,
   HYPEREVM_TESTNET_RPC_URL,
 } from "./constants";
+import { hettnetNetwork, hyperevmRpcUrl } from "./network";
 
 export const hyperEvm = defineChain({
   id: HYPEREVM_CHAIN_ID,
@@ -28,10 +29,10 @@ let client: PublicClient | null = null;
 
 export function evmClient(): PublicClient {
   if (client) return client;
-  const url = process.env.HYPEREVM_RPC_URL?.trim() || HYPEREVM_RPC_URL;
+  const testnet = hettnetNetwork() === "testnet";
   client = createPublicClient({
-    chain: hyperEvm,
-    transport: http(url, { timeout: 8_000 }),
+    chain: testnet ? hyperEvmTestnet : hyperEvm,
+    transport: http(hyperevmRpcUrl(), { timeout: 8_000 }),
   });
   return client;
 }

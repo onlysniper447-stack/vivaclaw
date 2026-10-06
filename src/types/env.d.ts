@@ -8,6 +8,7 @@ declare namespace NodeJS {
     NEXT_PUBLIC_WS_PORT?: string;
     NEXT_PUBLIC_APP_URL?: string;
     NEXT_PUBLIC_CLUSTER?: string;
+    HETTNET_NETWORK?: string;
     HYPEREVM_RPC_URL?: string;
     HYPEREVM_TESTNET_RPC_URL?: string;
     HYPERCORE_INFO_URL?: string;

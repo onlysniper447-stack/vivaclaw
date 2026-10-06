@@ -1,5 +1,6 @@
 import { cached } from "../cache";
-import { CACHE_TTL, HYPERCORE_INFO_URL, HYPERCORE_TOKENS } from "../constants";
+import { CACHE_TTL, HYPERCORE_TOKENS } from "../constants";
+import { hypercoreInfoUrl, hyperliquidAppUrl } from "../network";
 import { parseFinite, postJson } from "../http";
 import { nearKink, supplyApy as modelSupplyApy } from "../rate-model";
 import type { Opportunity } from "../types";
@@ -23,7 +24,7 @@ export async function fetchHyperCoreOpportunities(): Promise<Opportunity[]> {
 }
 
 async function loadHyperCore(): Promise<Opportunity[]> {
-  const rows = await postJson<ReserveTuple[]>(HYPERCORE_INFO_URL, {
+  const rows = await postJson<ReserveTuple[]>(hypercoreInfoUrl(), {
     type: "allBorrowLendReserveStates",
   });
   const fetchedAt = Date.now();
@@ -40,7 +41,9 @@ function mapReserve(row: ReserveTuple, fetchedAt: number): Opportunity | null {
   const label = meta?.label ?? symbol;
   const supply = parseFinite(state.supplyYearlyRate);
   const util = parseFinite(state.utilization);
-  const tvl = parseFinite(state.totalSupplied);
+  const supplied = parseFinite(state.totalSupplied);
+  const borrowed = parseFinite(state.totalBorrowed);
+  const tvl = supplied;
   const risks: string[] = [];
 
   if (meta?.kind === "collateral") {
@@ -74,6 +77,8 @@ function mapReserve(row: ReserveTuple, fetchedAt: number): Opportunity | null {
     apyIncentive: 0,
     apr: null,
     tvl: tvlUsd,
+    supplied,
+    borrowed,
     utilization: util,
     volume24h: null,
     volume7d: null,
@@ -85,7 +90,7 @@ function mapReserve(row: ReserveTuple, fetchedAt: number): Opportunity | null {
     ilClass: null,
     risks,
     source: "hypercore:allBorrowLendReserveStates",
-    url: "https://app.hyperliquid.xyz",
+    url: hyperliquidAppUrl(),
     verified: true,
     fetchedAt,
     stale: false,

@@ -19,6 +19,7 @@ export {
   CORE_WRITER_ADDRESS,
   FELIX_VAULTS,
   HYPERCORE_INFO_URL,
+  HYPERCORE_TESTNET_INFO_URL,
   HYPERCORE_TOKENS,
   HYPERCORE_USDC_EVM,
   HYPEREVM_CHAIN_ID,
@@ -28,6 +29,7 @@ export {
   HYPERLEND,
   HYPERLEND_APP_URL,
   HYPERLIQUID_APP_URL,
+  HYPERLIQUID_TESTNET_APP_URL,
   HYPERSWAP_APP_URL,
   HYPERSWAP,
   HYPE_SYSTEM_ADDRESS,
@@ -43,7 +45,14 @@ export {
   WSTHYPE,
 } from "./constants";
 
-export { collectAlerts, indicationRank, INDICATION_DISCLAIMER, scoreOpportunities, scoreOpportunity } from "./signal";
+export {
+  collectAlerts,
+  indicationRank,
+  INDICATION_DISCLAIMER,
+  scoreOpportunities,
+  scoreOpportunity,
+  type SignalOptions,
+} from "./signal";
 export {
   buildEntryPlan,
   defaultPlanAmountWei,
@@ -57,6 +66,7 @@ export {
   type PlanStep,
 } from "./entry";
 export { hyperEvm, hyperEvmTestnet, evmClient } from "./chain";
+export { hettnetNetwork, hypercoreInfoUrl, hyperevmRpcUrl, hyperliquidAppUrl } from "./network";
 export { discoverOpportunities } from "./aggregator";
 export { fetchHyperCoreOpportunities } from "./adapters/hypercore";
 export { fetchLlamaOpportunities } from "./adapters/llama";

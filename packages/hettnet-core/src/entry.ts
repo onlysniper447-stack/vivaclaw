@@ -10,9 +10,9 @@ import {
   CORE_WRITER_ADDRESS,
   HYPERLEND,
   HYPERLEND_APP_URL,
-  HYPERLIQUID_APP_URL,
   HYPERSWAP_APP_URL,
 } from "./constants";
+import { hettnetNetwork, hyperliquidAppUrl } from "./network";
 import { INDICATION_DISCLAIMER } from "./signal";
 import type { Opportunity } from "./types";
 
@@ -202,11 +202,14 @@ export function buildEntryPlan(
   const decimals = tokenDecimals(opp.assets[0]?.symbol ?? symbol, opp.layer);
   const amount = opts.amountWei ?? defaultPlanAmountWei(opp.assets[0]?.symbol ?? symbol, decimals);
   const indication = opp.signal?.indication ?? null;
+  const testnet = hettnetNetwork() === "testnet";
   const risks = [
     ...opp.risks,
     ...(opp.signal?.reasons ?? []),
     "Indications are informational, not financial advice.",
-    "Mainnet send is off. Connecting a wallet never signs.",
+    testnet
+      ? "Testnet only. Connecting a wallet never signs. Mainnet send is off."
+      : "Mainnet send is off. Connecting a wallet never signs.",
   ];
 
   const base: Omit<EntryPlan, "steps" | "txs" | "deepLink" | "coreWeiDecimalsAssumed" | "requiredToken"> = {
@@ -216,7 +219,7 @@ export function buildEntryPlan(
     indication,
     amountLabel: formatAmount(amount, decimals, opp.assets[0]?.symbol ?? symbol),
     amountWei: amount.toString(),
-    signNetwork: "mainnet-blocked",
+    signNetwork: testnet ? "testnet" : "mainnet-blocked",
     risks,
     disclaimer: INDICATION_DISCLAIMER,
   };
@@ -253,14 +256,14 @@ export function buildEntryPlan(
         },
       ],
       txs,
-      deepLink: opp.url ?? HYPERLIQUID_APP_URL,
+      deepLink: opp.url && !testnet ? opp.url : hyperliquidAppUrl(),
       coreWeiDecimalsAssumed: 8,
     };
   }
 
   if (opp.venue === "hyperlend") {
     const asset = asAddress(opp.assets[0]?.id);
-    const txs = asset ? encodeHyperlendSupply(asset, amount, account) : [];
+    const txs = !testnet && asset ? encodeHyperlendSupply(asset, amount, account) : [];
     return {
       ...base,
       requiredToken: {
@@ -274,7 +277,9 @@ export function buildEntryPlan(
         { title: "Supply", detail: "Pool.supply(asset, amount, onBehalfOf, 0) on the documented Core Pool." },
         {
           title: "Testnet",
-          detail: "HyperLend Core Pool is documented on HyperEVM mainnet. Testnet deployments were not found. eth_call can still dry-run on mainnet. Send stays off.",
+          detail: testnet
+            ? "HyperLend Core Pool is documented on HyperEVM mainnet. Testnet deployments were not found. Calldata is omitted. Send stays off."
+            : "HyperLend Core Pool is documented on HyperEVM mainnet. Testnet deployments were not found. Send stays off.",
         },
       ],
       txs,
@@ -286,7 +291,7 @@ export function buildEntryPlan(
   if (opp.venue === "felix" || opp.venue === "morpho") {
     const vault = vaultAddress(opp.id);
     const asset = asAddress(opp.assets[0]?.id);
-    const txs = vault && asset ? encodeErc4626Deposit(vault, asset, amount, account) : [];
+    const txs = !testnet && vault && asset ? encodeErc4626Deposit(vault, asset, amount, account) : [];
     return {
       ...base,
       requiredToken: {
@@ -300,7 +305,9 @@ export function buildEntryPlan(
         { title: "Deposit", detail: "vault.deposit(assets, receiver)." },
         {
           title: "Testnet",
-          detail: "Felix/Morpho vaults in this list are mainnet addresses. Testnet deployments were not found. Send stays off.",
+          detail: testnet
+            ? "Felix/Morpho vaults in this list are mainnet addresses. Testnet deployments were not found. Calldata is omitted. Send stays off."
+            : "Felix/Morpho vaults in this list are mainnet addresses. Testnet deployments were not found. Send stays off.",
         },
       ],
       txs,
@@ -335,7 +342,7 @@ export function buildEntryPlan(
 function venueAppUrl(venue: Opportunity["venue"]): string | null {
   if (venue === "hyperswap") return HYPERSWAP_APP_URL;
   if (venue === "hyperlend") return HYPERLEND_APP_URL;
-  if (venue === "hypercore") return HYPERLIQUID_APP_URL;
+  if (venue === "hypercore") return hyperliquidAppUrl();
   return null;
 }
 

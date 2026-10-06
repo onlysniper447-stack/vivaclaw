@@ -6,6 +6,7 @@ import { fetchMorphoOpportunities } from "./adapters/morpho";
 import { verifyErc4626Vaults } from "./adapters/verify-vault";
 import { cached } from "./cache";
 import { CACHE_TTL, VERIFY_TOP_N } from "./constants";
+import { hettnetNetwork } from "./network";
 import { collectAlerts, indicationRank, INDICATION_DISCLAIMER, scoreOpportunities } from "./signal";
 import type { DiscoverResult, Opportunity } from "./types";
 
@@ -44,7 +45,8 @@ async function loadAll(): Promise<DiscoverResult> {
 function skipVerify(): boolean {
   return (
     process.env.NEXT_PHASE === "phase-production-build" ||
-    process.env.HETTNET_SKIP_VERIFY === "1"
+    process.env.HETTNET_SKIP_VERIFY === "1" ||
+    hettnetNetwork() === "testnet"
   );
 }
 

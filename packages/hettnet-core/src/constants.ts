@@ -1,6 +1,7 @@
 /** Verified Hyperliquid / HyperEVM addresses and endpoints. Do not invent extras. */
 
 export const HYPERCORE_INFO_URL = "https://api.hyperliquid.xyz/info";
+export const HYPERCORE_TESTNET_INFO_URL = "https://api.hyperliquid-testnet.xyz/info";
 export const HYPEREVM_RPC_URL = "https://rpc.hyperliquid.xyz/evm";
 export const HYPEREVM_TESTNET_RPC_URL = "https://rpc.hyperliquid-testnet.xyz/evm";
 export const HYPEREVM_CHAIN_ID = 999;
@@ -17,6 +18,7 @@ export const WHYPE_ADDRESS = "0x5555555555555555555555555555555555555555";
 /** Official CoreWriter system contract. Sends HyperEVM txs that HyperCore executes. */
 export const CORE_WRITER_ADDRESS = "0x3333333333333333333333333333333333333333";
 export const HYPERLIQUID_APP_URL = "https://app.hyperliquid.xyz";
+export const HYPERLIQUID_TESTNET_APP_URL = "https://app.hyperliquid-testnet.xyz";
 export const HYPERLEND_APP_URL = "https://app.hyperlend.finance";
 export const HYPERSWAP_APP_URL = "https://app.hyperswap.exchange";
 

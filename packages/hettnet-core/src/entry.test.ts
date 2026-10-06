@@ -90,10 +90,10 @@ describe("ERC-4626 deposit", () => {
 });
 
 describe("buildEntryPlan", () => {
-  it("encodes HyperLend approve + supply and blocks mainnet send", () => {
+  it("omits HyperLend calldata on testnet and keeps send off", () => {
     const plan = buildEntryPlan(opp({ id: "llama:hyperlend-pooled:usdc" }), { account });
-    assert.equal(plan.txs.length, 2);
-    assert.equal(plan.signNetwork, "mainnet-blocked");
+    assert.equal(plan.txs.length, 0);
+    assert.equal(plan.signNetwork, "testnet");
     assert.equal(plan.deepLink, "https://app.hyperlend.finance");
     assert.match(plan.amountLabel, /1 USDC/);
   });
@@ -109,13 +109,13 @@ describe("buildEntryPlan", () => {
       }),
       { account },
     );
-    assert.equal(plan.deepLink, "https://app.hyperliquid.xyz");
+    assert.equal(plan.deepLink, "https://app.hyperliquid-testnet.xyz");
     assert.equal(plan.txs.length, 1);
     assert.equal(plan.coreWeiDecimalsAssumed, 8);
     assert.ok(plan.steps.some((step) => step.detail.includes("not Circle USDC")));
   });
 
-  it("encodes Felix vault deposit from the morpho:vault id", () => {
+  it("omits Felix vault calldata on testnet", () => {
     const plan = buildEntryPlan(
       opp({
         id: "morpho:vault:0x8a862fd6c12f9ad34c9c2ff45ab2b6712e8cea27",
@@ -125,8 +125,8 @@ describe("buildEntryPlan", () => {
       }),
       { account },
     );
-    assert.equal(plan.txs.length, 2);
-    assert.equal(plan.txs[1]?.to.toLowerCase(), "0x8a862fd6c12f9ad34c9c2ff45ab2b6712e8cea27");
+    assert.equal(plan.txs.length, 0);
+    assert.equal(plan.signNetwork, "testnet");
   });
 
   it("deep-links LPs without in-app mint calldata", () => {

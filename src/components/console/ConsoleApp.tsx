@@ -8,6 +8,7 @@ import { CheckYields } from "@/components/console/CheckYields";
 import { ConnectWallet } from "@/components/wallet/ConnectWallet";
 import { WalletBoard } from "@/components/wallet/WalletBoard";
 import { ActivityBoard } from "@/components/console/ActivityBoard";
+import { AgentsBoard } from "@/components/console/AgentsBoard";
 import { ExecutionBoard } from "@/components/console/ExecutionBoard";
 import { Overview } from "@/components/console/Overview";
 import { RiskBoard } from "@/components/console/RiskBoard";
@@ -23,6 +24,7 @@ const TABS = [
   { id: "execution", label: "Execution" },
   { id: "activity", label: "Activity" },
   { id: "wallet", label: "Wallet" },
+  { id: "agents", label: "Agents" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -74,7 +76,8 @@ export function ConsoleApp() {
               {freshnessLabel(desk.data?.lastScanAt ?? null)}
             </p>
             <ConnectWallet compact />
-            <Tooltip label="Indications are informational, not financial advice. The console never signs, sends, or broadcasts.">
+            <Chip>Testnet</Chip>
+            <Tooltip label="Indications are informational, not financial advice. The console never signs, sends, or broadcasts. HyperEVM chain 998.">
               <Chip>Dry run</Chip>
             </Tooltip>
           </div>
@@ -93,7 +96,9 @@ export function ConsoleApp() {
         <div aria-live="polite" className="sr-only">
           {desk.data ? `Engine ${desk.data.engine.phase}` : "Loading console"}
         </div>
-        {tab === "wallet" ? (
+        {tab === "agents" ? (
+          <AgentsBoard />
+        ) : tab === "wallet" ? (
           <WalletBoard />
         ) : offline ? (
           <EmptyState
